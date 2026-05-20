@@ -56,7 +56,7 @@
   .logo-text .plan { font-size: 9px; font-weight: 600; color: var(--text-3); letter-spacing: .06em; text-transform: uppercase; }
   .logo-text .name { font-size: 13px; font-weight: 700; color: var(--text-1); }
   .nav-label { font-size: 10px; font-weight: 700; color: var(--text-3); letter-spacing: .08em; text-transform: uppercase; padding: 10px 12px 4px; }
-  .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 500; color: var(--text-2); cursor: pointer; transition: all 140ms; text-decoration: none; margin-bottom: 1px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 500; color: var(--text-2); cursor: pointer; transition: background 140ms, color 140ms; text-decoration: none; margin-bottom: 1px; }
   .nav-item:hover { background: var(--bg); color: var(--text-1); }
   .nav-item.active { background: var(--primary-light); color: var(--primary-dark); font-weight: 600; }
   .nav-badge { margin-left: auto; background: var(--primary); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: var(--radius-pill); }
@@ -76,7 +76,7 @@
   .breadcrumb .sep { color: var(--border); }
   .breadcrumb .current { color: var(--text-1); font-weight: 600; }
   .header-actions { display: flex; align-items: center; gap: 10px; }
-  .btn-icon { width: 36px; height: 36px; border-radius: var(--radius-pill); border: 1px solid var(--border); background: var(--surface); display: grid; place-items: center; cursor: pointer; color: var(--text-2); transition: all 140ms; }
+  .btn-icon { width: 36px; height: 36px; border-radius: var(--radius-pill); border: 1px solid var(--border); background: var(--surface); display: grid; place-items: center; cursor: pointer; color: var(--text-2); transition: border-color 140ms, color 140ms; }
   .btn-icon:hover { border-color: var(--primary); color: var(--primary); }
 
   /* ── PAGE ── */
@@ -113,7 +113,8 @@
 
   .job-hero-actions { display: flex; gap: 8px; align-items: center; }
 
-  .btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 20px; border-radius: var(--radius-pill); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 150ms; border: none; outline: none; white-space: nowrap; }
+  .btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 20px; border-radius: var(--radius-pill); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 150ms, box-shadow 150ms, border-color 150ms, color 150ms; border: none; white-space: nowrap; }
+  .btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
   .btn-ghost { background: transparent; color: var(--text-2); border: 1.5px solid var(--border); }
   .btn-ghost:hover { border-color: var(--text-2); color: var(--text-1); }
   .btn-primary { background: var(--primary); color: #fff; border: 1.5px solid transparent; }
@@ -146,7 +147,8 @@
     padding: 4px 12px; border-radius: var(--radius-pill);
     background: var(--surface-2); border: 1px solid var(--border);
     font-size: 11px; font-weight: 600; color: var(--text-2); cursor: pointer;
-    transition: all 140ms; white-space: nowrap;
+    transition: background 140ms, color 140ms; white-space: nowrap;
+    font-family: inherit;
   }
   .filter-pill:hover { border-color: var(--primary); color: var(--primary); }
   .filter-pill.active { background: var(--primary-light); border-color: var(--primary); color: var(--primary-dark); }
@@ -158,15 +160,18 @@
   /* ── TABS ── */
   .view-tabs {
     display: flex; align-items: center; gap: 4px; margin-bottom: 16px;
+    role: tablist;
   }
   .view-tab {
     display: flex; align-items: center; gap: 6px;
     padding: 7px 16px; border-radius: var(--radius-pill);
     font-size: 12px; font-weight: 600; color: var(--text-3);
-    cursor: pointer; transition: all 140ms; border: 1.5px solid transparent;
+    cursor: pointer; transition: background 140ms, color 140ms; border: 1.5px solid transparent;
+    background: none; font-family: inherit;
   }
   .view-tab:hover { color: var(--text-2); }
   .view-tab.active { background: var(--surface); border-color: var(--border); color: var(--text-1); }
+  .view-tab:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
   .tab-count {
     background: var(--surface-2); color: var(--text-3);
     padding: 1px 7px; border-radius: var(--radius-pill);
@@ -213,10 +218,11 @@
   /* status selector */
   .status-select {
     background: none; border: none; font-family: inherit; font-size: 11px;
-    font-weight: 700; cursor: pointer; outline: none; padding: 4px 12px;
+    font-weight: 700; cursor: pointer; padding: 4px 12px;
     border-radius: var(--radius-pill); appearance: none;
     -webkit-appearance: none; color: inherit;
   }
+  .status-select:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
   .verified-badge {
     display: inline-flex; align-items: center; gap: 4px;
@@ -249,9 +255,10 @@
   .pagination { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-top: 1px solid var(--border); }
   .page-info { font-size: 12px; color: var(--text-3); }
   .page-btns { display: flex; align-items: center; gap: 4px; }
-  .page-btn { width: 32px; height: 32px; border-radius: var(--radius-pill); border: 1.5px solid var(--border); background: var(--surface); display: grid; place-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text-2); transition: all 140ms; }
+  .page-btn { width: 32px; height: 32px; border-radius: var(--radius-pill); border: 1.5px solid var(--border); background: var(--surface); display: grid; place-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text-2); transition: background 140ms, color 140ms; font-family: inherit; }
   .page-btn:hover { border-color: var(--primary); color: var(--primary); }
   .page-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+  .page-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 </style>
 </head>
 <body>
@@ -266,30 +273,30 @@
   </div>
   <div class="nav-label">Overview</div>
   <a class="nav-item" href="#">
-    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    <svg aria-hidden="true" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
     Dashboard
   </a>
   <div class="nav-label" style="margin-top:8px">Talent</div>
   <a class="nav-item" href="#">
-    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+    <svg aria-hidden="true" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
     Job Postings
   </a>
   <a class="nav-item active" href="#">
-    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <svg aria-hidden="true" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
     Applicants
     <span class="nav-badge">24</span>
   </a>
   <a class="nav-item" href="#">
-    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <svg aria-hidden="true" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     Candidate Search
   </a>
   <div class="nav-label" style="margin-top:8px">Organization</div>
   <a class="nav-item" href="#">
-    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+    <svg aria-hidden="true" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
     Organization Profile
   </a>
   <a class="nav-item" href="#">
-    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <svg aria-hidden="true" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
     Admin Review
   </a>
   <div class="sidebar-bottom">
@@ -311,11 +318,11 @@
     </div>
     <div class="header-actions">
       <button class="btn btn-ghost" style="font-size:12px;padding:7px 16px;">
-        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <svg aria-hidden="true" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Export CSV
       </button>
-      <button class="btn-icon">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <button class="btn-icon" aria-label="Notifications">
+        <svg aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
       </button>
     </div>
   </header>
@@ -325,15 +332,15 @@
     <!-- Job Hero Card -->
     <div class="job-hero">
       <div class="job-hero-info">
-        <div class="job-hero-title">Senior Clinical Educator</div>
+        <h2 class="job-hero-title">Senior Clinical Educator</h2>
         <div class="job-hero-meta">
           <span class="status-chip chip-active">● Active</span>
           <span class="meta-chip">
-            <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+            <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
             Cardiology
           </span>
           <span class="meta-chip">
-            <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             Posted 5 days ago
           </span>
           <span class="meta-chip">2 Openings</span>
@@ -348,7 +355,7 @@
       <div class="job-hero-actions">
         <button class="btn btn-ghost" style="font-size:12px;padding:8px 16px;">Edit Posting</button>
         <button class="btn btn-primary" style="font-size:12px;padding:8px 16px;">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <svg aria-hidden="true" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           Close Job
         </button>
       </div>
@@ -356,14 +363,14 @@
 
     <!-- Closed notice (edge case) -->
     <div class="closed-notice" style="display:none" id="closed-notice">
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <svg aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       <div><strong>This job is closed.</strong> New applications are disabled. Existing applications and applicant history are preserved below.</div>
     </div>
 
     <!-- Filter Bar -->
     <div class="filter-bar">
       <div class="search-input-wrap">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--text-3);flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <svg aria-hidden="true" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--text-3);flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <input type="text" placeholder="Search by name, specialty, or certification…" />
       </div>
       <div class="filter-divider"></div>
@@ -378,36 +385,36 @@
         <option>Withdrawn</option>
       </select>
       <div class="filter-divider"></div>
-      <div class="filter-pill active">Verified Skills <span class="filter-count">3</span></div>
-      <div class="filter-pill">AACN Certified</div>
-      <div class="filter-pill">MSN+</div>
-      <div class="filter-pill">5+ Years</div>
+      <button type="button" class="filter-pill active">Verified Skills <span class="filter-count">3</span></button>
+      <button type="button" class="filter-pill">AACN Certified</button>
+      <button type="button" class="filter-pill">MSN+</button>
+      <button type="button" class="filter-pill">5+ Years</button>
     </div>
 
     <!-- View Tabs -->
-    <div class="view-tabs">
-      <div class="view-tab active">
-        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    <div class="view-tabs" role="tablist">
+      <button type="button" role="tab" class="view-tab active" aria-selected="true">
+        <svg aria-hidden="true" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
         All <span class="tab-count">24</span>
-      </div>
-      <div class="view-tab">
+      </button>
+      <button type="button" role="tab" class="view-tab" aria-selected="false">
         Applied <span class="tab-count">7</span>
-      </div>
-      <div class="view-tab">
+      </button>
+      <button type="button" role="tab" class="view-tab" aria-selected="false">
         Under Review <span class="tab-count">8</span>
-      </div>
-      <div class="view-tab">
+      </button>
+      <button type="button" role="tab" class="view-tab" aria-selected="false">
         Interview <span class="tab-count">5</span>
-      </div>
-      <div class="view-tab">
+      </button>
+      <button type="button" role="tab" class="view-tab" aria-selected="false">
         Offer Extended <span class="tab-count">2</span>
-      </div>
-      <div class="view-tab">
+      </button>
+      <button type="button" role="tab" class="view-tab" aria-selected="false">
         Hired <span class="tab-count">1</span>
-      </div>
-      <div class="view-tab">
+      </button>
+      <button type="button" role="tab" class="view-tab" aria-selected="false">
         Rejected <span class="tab-count">1</span>
-      </div>
+      </button>
     </div>
 
     <!-- Applicants Table -->
@@ -415,11 +422,11 @@
       <table>
         <thead>
           <tr>
-            <th>Applicant</th>
-            <th>Applied</th>
-            <th>Qualifications</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th scope="col">Applicant</th>
+            <th scope="col">Applied</th>
+            <th scope="col">Qualifications</th>
+            <th scope="col">Status</th>
+            <th scope="col">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -445,7 +452,7 @@
             <td>
               <div class="status-badge s-interview" style="cursor:pointer">
                 <span class="status-dot"></span>
-                <select class="status-select s-interview" onchange="updateStatus(this)">
+                <select class="status-select s-interview" aria-label="Change applicant status" onchange="updateStatus(this)">
                   <option>Applied</option>
                   <option>Under Review</option>
                   <option selected>Interview Scheduled</option>
@@ -459,7 +466,7 @@
             <td>
               <div class="action-btns">
                 <button class="action-btn cv">
-                  <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                   View CV
                 </button>
                 <button class="action-btn">Application</button>
@@ -488,7 +495,7 @@
             <td>
               <div class="status-badge s-offer">
                 <span class="status-dot"></span>
-                <select class="status-select s-offer" onchange="updateStatus(this)">
+                <select class="status-select s-offer" aria-label="Change applicant status" onchange="updateStatus(this)">
                   <option>Applied</option>
                   <option>Under Review</option>
                   <option>Interview Scheduled</option>
@@ -502,7 +509,7 @@
             <td>
               <div class="action-btns">
                 <button class="action-btn cv">
-                  <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                   View CV
                 </button>
                 <button class="action-btn">Application</button>
@@ -530,7 +537,7 @@
             <td>
               <div class="status-badge s-hired">
                 <span class="status-dot"></span>
-                <select class="status-select s-hired" onchange="updateStatus(this)">
+                <select class="status-select s-hired" aria-label="Change applicant status" onchange="updateStatus(this)">
                   <option>Applied</option>
                   <option>Under Review</option>
                   <option>Interview Scheduled</option>
@@ -544,7 +551,7 @@
             <td>
               <div class="action-btns">
                 <button class="action-btn cv">
-                  <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                   View CV
                 </button>
                 <button class="action-btn">Application</button>
@@ -572,7 +579,7 @@
             <td>
               <div class="status-badge s-review">
                 <span class="status-dot"></span>
-                <select class="status-select s-review" onchange="updateStatus(this)">
+                <select class="status-select s-review" aria-label="Change applicant status" onchange="updateStatus(this)">
                   <option>Applied</option>
                   <option selected>Under Review</option>
                   <option>Interview Scheduled</option>
@@ -586,7 +593,7 @@
             <td>
               <div class="action-btns">
                 <button class="action-btn cv">
-                  <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                   View CV
                 </button>
                 <button class="action-btn">Application</button>
@@ -641,7 +648,7 @@
             <td>
               <div class="status-badge s-applied">
                 <span class="status-dot"></span>
-                <select class="status-select s-applied" onchange="updateStatus(this)">
+                <select class="status-select s-applied" aria-label="Change applicant status" onchange="updateStatus(this)">
                   <option selected>Applied</option>
                   <option>Under Review</option>
                   <option>Interview Scheduled</option>
@@ -655,7 +662,7 @@
             <td>
               <div class="action-btns">
                 <button class="action-btn cv">
-                  <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                   View CV
                 </button>
                 <button class="action-btn">Application</button>
@@ -668,12 +675,12 @@
       <div class="pagination">
         <div class="page-info">Showing 6 of 24 applicants</div>
         <div class="page-btns">
-          <button class="page-btn">‹</button>
-          <button class="page-btn active">1</button>
-          <button class="page-btn">2</button>
-          <button class="page-btn">3</button>
-          <button class="page-btn">4</button>
-          <button class="page-btn">›</button>
+          <button class="page-btn" aria-label="Previous page">‹</button>
+          <button class="page-btn active" aria-label="Page 1" aria-current="page">1</button>
+          <button class="page-btn" aria-label="Page 2">2</button>
+          <button class="page-btn" aria-label="Page 3">3</button>
+          <button class="page-btn" aria-label="Page 4">4</button>
+          <button class="page-btn" aria-label="Next page">›</button>
         </div>
       </div>
     </div>
@@ -700,7 +707,14 @@
     badge.classList.add(cls); sel.classList.add(cls);
   }
   document.querySelectorAll('.view-tab').forEach(t => {
-    t.addEventListener('click', () => { document.querySelectorAll('.view-tab').forEach(x => x.classList.remove('active')); t.classList.add('active'); });
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.view-tab').forEach(x => {
+        x.classList.remove('active');
+        x.setAttribute('aria-selected', 'false');
+      });
+      t.classList.add('active');
+      t.setAttribute('aria-selected', 'true');
+    });
   });
   document.querySelectorAll('.filter-pill').forEach(p => {
     p.addEventListener('click', () => p.classList.toggle('active'));
