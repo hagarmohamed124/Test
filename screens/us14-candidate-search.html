@@ -10,6 +10,13 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  .skip-link {
+    position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden;
+    background: #0891B2; color: #fff; padding: 8px 16px; font-weight: 600; font-size: 14px;
+    border-radius: 0 0 8px 0; z-index: 9999; text-decoration: none;
+  }
+  .skip-link:focus { position: fixed; left: 0; top: 0; width: auto; height: auto; overflow: visible; }
+
   :root {
     --primary:       #0891B2;
     --primary-dark:  #0e7490;
@@ -101,7 +108,7 @@
   .btn-search {
     background: var(--primary); color: #fff; border: none;
     border-radius: var(--radius-pill); padding: 10px 22px;
-    font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+    font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; touch-action: manipulation;
     display: flex; align-items: center; gap: 7px; transition: background 150ms;
     white-space: nowrap;
   }
@@ -261,7 +268,7 @@
   .cand-meta-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-3); }
 
   .cand-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; flex-shrink: 0; }
-  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius-pill); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 150ms, box-shadow 150ms, border-color 150ms, color 150ms; border: none; white-space: nowrap; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius-pill); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; touch-action: manipulation; transition: background 150ms, box-shadow 150ms, border-color 150ms, color 150ms; border: none; white-space: nowrap; }
   .btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
   .btn-primary { background: var(--primary); color: #fff; border: 1.5px solid transparent; }
   .btn-primary:hover { background: var(--primary-dark); }
@@ -302,10 +309,23 @@
     padding: 8px 16px; background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--radius-pill); font-size: 11px; color: var(--text-3); margin-top: 12px;
   }
-  .load-more-btn { background: none; border: none; cursor: pointer; font-family: inherit; font-size: 11px; font-weight: 600; color: var(--text-2); padding: 0; text-decoration: underline; }
+  .load-more-btn { background: none; border: none; cursor: pointer; touch-action: manipulation; font-family: inherit; font-size: 11px; font-weight: 600; color: var(--text-2); padding: 0; text-decoration: underline; }
+
+  a { cursor: pointer; touch-action: manipulation; }
+  select { cursor: pointer; touch-action: manipulation; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 </style>
 </head>
 <body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
 <aside>
   <div class="logo">
@@ -351,7 +371,8 @@
   </div>
 </aside>
 
-<main>
+<main id="main-content">
+  <div aria-live="polite" aria-atomic="true" class="sr-only" id="status-announcer"></div>
   <header>
     <div class="breadcrumb">
       <span class="current">Candidate Search</span>
@@ -664,7 +685,7 @@
               <div>
                 <div class="cand-name-row">
                   <span class="cand-name">Rajan Patel</span>
-                  <span class="cand-partial">⚠ Partial Profile</span>
+                  <span class="cand-partial"><svg aria-hidden="true" focusable="false" width="12" height="12" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline;vertical-align:-1px;margin-right:3px"><path d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 6a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 6zm0 9a1 1 0 100-2 1 1 0 000 2z" fill="currentColor"/></svg>Partial Profile</span>
                 </div>
                 <div class="cand-title">Clinical Nurse · Cardiology · Remote</div>
               </div>

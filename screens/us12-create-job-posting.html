@@ -10,6 +10,15 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  .skip-link {
+    position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden;
+    background: #0891B2; color: #fff; padding: 8px 16px; font-weight: 600; font-size: 14px;
+    border-radius: 0 0 8px 0; z-index: 9999; text-decoration: none;
+  }
+  .skip-link:focus { position: fixed; left: 0; top: 0; width: auto; height: auto; overflow: visible; }
+
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
   :root {
     --primary:       #0891B2;
     --primary-dark:  #0e7490;
@@ -257,7 +266,7 @@
   .field-hint  { font-size: 11px; color: var(--text-3); }
 
   textarea { resize: vertical; min-height: 110px; }
-  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer; }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer; touch-action: manipulation; }
 
   /* tag input */
   .tag-input-wrap {
@@ -310,7 +319,7 @@
     display: inline-flex; align-items: center; gap: 7px;
     padding: 10px 22px; border-radius: var(--radius-pill);
     font-family: inherit; font-size: 13px; font-weight: 600;
-    cursor: pointer; transition: background 150ms, box-shadow 150ms, border-color 150ms, color 150ms; border: none;
+    cursor: pointer; touch-action: manipulation; transition: background 150ms, box-shadow 150ms, border-color 150ms, color 150ms; border: none;
     text-decoration: none; white-space: nowrap;
   }
   .btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
@@ -346,7 +355,7 @@
   }
   .step-btn {
     width: 36px; height: 36px; background: var(--surface-2); border: none;
-    cursor: pointer; font-size: 18px; color: var(--text-2); display: grid; place-items: center;
+    cursor: pointer; touch-action: manipulation; font-size: 18px; color: var(--text-2); display: grid; place-items: center;
     transition: background 140ms;
   }
   .step-btn:hover { background: var(--primary-light); color: var(--primary); }
@@ -356,9 +365,21 @@
     background: var(--surface);
     border-left: 1.5px solid var(--border); border-right: 1.5px solid var(--border);
   }
+
+  a { cursor: pointer; touch-action: manipulation; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 </style>
 </head>
 <body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
 <!-- ── SIDEBAR ── -->
 <aside>
@@ -419,7 +440,8 @@
 </aside>
 
 <!-- ── MAIN ── -->
-<main>
+<main id="main-content">
+  <div aria-live="polite" aria-atomic="true" class="sr-only" id="status-announcer"></div>
   <header>
     <div class="breadcrumb">
       <a href="#">Job Postings</a>
