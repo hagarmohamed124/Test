@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EduVerse — Create Job Posting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary:       #0891B2;
+    --primary-dark:  #0e7490;
+    --primary-light: #cffafe;
+    --accent:        #059669;
+    --accent-light:  #d1fae5;
+    --bg:            #f0f9ff;
+    --surface:       #ffffff;
+    --surface-2:     #f8fafc;
+    --border:        #e2e8f0;
+    --border-focus:  #0891B2;
+    --text-1:        #0f172a;
+    --text-2:        #475569;
+    --text-3:        #94a3b8;
+    --danger:        #dc2626;
+    --danger-light:  #fef2f2;
+    --warning:       #d97706;
+    --warning-light: #fffbeb;
+    --sidebar-w:     248px;
+    --radius-pill:   9999px;
+    --radius-card:   20px;
+    --radius-input:  12px;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-1);
+    display: flex;
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── SIDEBAR ── */
+  aside {
+    width: var(--sidebar-w);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 20;
+    padding: 0 12px;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    padding: 20px 12px 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .logo-mark {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: var(--primary);
+    display: grid; place-items: center;
+    font-weight: 800; font-size: 16px; color: #fff;
+  }
+  .logo-text { display: flex; flex-direction: column; }
+  .logo-text .plan { font-size: 9px; font-weight: 600; color: var(--text-3); letter-spacing: .06em; text-transform: uppercase; }
+  .logo-text .name { font-size: 13px; font-weight: 700; color: var(--text-1); }
+
+  .nav-section { margin-bottom: 4px; }
+  .nav-label { font-size: 10px; font-weight: 700; color: var(--text-3); letter-spacing: .08em; text-transform: uppercase; padding: 10px 12px 4px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; border-radius: var(--radius-pill);
+    font-size: 13px; font-weight: 500; color: var(--text-2);
+    cursor: pointer; transition: all 140ms ease;
+    text-decoration: none; margin-bottom: 1px;
+  }
+  .nav-item:hover { background: var(--bg); color: var(--text-1); }
+  .nav-item.active { background: var(--primary-light); color: var(--primary-dark); font-weight: 600; }
+  .nav-item svg { flex-shrink: 0; opacity: .7; }
+  .nav-item.active svg { opacity: 1; }
+  .nav-badge {
+    margin-left: auto; background: var(--primary); color: #fff;
+    font-size: 10px; font-weight: 700; padding: 1px 7px;
+    border-radius: var(--radius-pill); min-width: 18px; text-align: center;
+  }
+
+  .sidebar-bottom {
+    margin-top: auto; padding: 12px 0;
+    border-top: 1px solid var(--border);
+  }
+  .org-pill {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; border-radius: var(--radius-pill);
+    cursor: pointer; transition: background 140ms;
+  }
+  .org-pill:hover { background: var(--bg); }
+  .org-avatar {
+    width: 32px; height: 32px; border-radius: var(--radius-pill);
+    background: linear-gradient(135deg, #0891B2, #059669);
+    display: grid; place-items: center;
+    font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .org-name { font-size: 12px; font-weight: 600; color: var(--text-1); }
+  .org-role { font-size: 11px; color: var(--text-3); }
+
+  /* ── MAIN ── */
+  main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* top bar */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .breadcrumb {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; color: var(--text-3);
+  }
+  .breadcrumb a { color: var(--text-3); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--primary); }
+  .breadcrumb .sep { color: var(--border); }
+  .breadcrumb .current { color: var(--text-1); font-weight: 600; }
+
+  .header-actions { display: flex; align-items: center; gap: 10px; }
+  .btn-icon {
+    width: 36px; height: 36px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); background: var(--surface);
+    display: grid; place-items: center; cursor: pointer;
+    color: var(--text-2); transition: all 140ms;
+  }
+  .btn-icon:hover { border-color: var(--primary); color: var(--primary); }
+  .notif-dot { position: relative; }
+  .notif-dot::after {
+    content: ''; position: absolute; top: 6px; right: 6px;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--danger); border: 2px solid var(--surface);
+  }
+
+  /* ── PAGE BODY ── */
+  .page-body {
+    padding: 32px;
+    max-width: 860px;
+    width: 100%;
+  }
+
+  .page-title-row {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .page-title h1 { font-size: 22px; font-weight: 800; color: var(--text-1); }
+  .page-title p { font-size: 13px; color: var(--text-2); margin-top: 2px; }
+
+  .step-bar {
+    display: flex; align-items: center; gap: 0;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-pill); padding: 4px; margin-bottom: 28px;
+  }
+  .step {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+    padding: 8px 14px; border-radius: var(--radius-pill);
+    font-size: 12px; font-weight: 600; color: var(--text-3); cursor: pointer;
+    transition: all 200ms; white-space: nowrap;
+  }
+  .step.done { color: var(--accent); }
+  .step.active { background: var(--primary); color: #fff; }
+  .step-num {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: currentColor; opacity: .25;
+    display: grid; place-items: center;
+    font-size: 10px; font-weight: 800; color: inherit;
+    flex-shrink: 0;
+  }
+  .step.active .step-num { opacity: 1; background: rgba(255,255,255,.25); color: #fff; }
+  .step.done .step-num { opacity: 1; background: var(--accent); color: #fff; }
+
+  /* ── BANNER ── */
+  .banner {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 18px; border-radius: var(--radius-card);
+    margin-bottom: 20px; font-size: 13px;
+  }
+  .banner.warning { background: var(--warning-light); border: 1px solid #fde68a; color: #92400e; }
+  .banner.danger  { background: var(--danger-light);  border: 1px solid #fecaca; color: #991b1b; }
+  .banner-icon { flex-shrink: 0; margin-top: 1px; }
+  .banner-body strong { font-weight: 700; display: block; margin-bottom: 2px; }
+  .banner-close {
+    margin-left: auto; cursor: pointer; opacity: .5;
+    background: none; border: none; font-size: 18px; line-height: 1;
+    color: inherit; flex-shrink: 0;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 14px; font-weight: 700; color: var(--text-1);
+    margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
+  }
+  .card-title-badge {
+    font-size: 10px; font-weight: 700; padding: 2px 10px;
+    border-radius: var(--radius-pill); background: var(--primary-light); color: var(--primary);
+  }
+
+  /* ── FORM ── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-grid .full { grid-column: 1 / -1; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  label {
+    font-size: 12px; font-weight: 600; color: var(--text-2);
+    display: flex; align-items: center; gap: 4px;
+  }
+  label .req { color: var(--danger); font-size: 13px; }
+  label .hint { font-weight: 400; color: var(--text-3); font-size: 11px; margin-left: 4px; }
+
+  input[type=text], input[type=number], input[type=email],
+  select, textarea {
+    width: 100%; padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-input);
+    font-family: inherit; font-size: 13px; color: var(--text-1);
+    background: var(--surface);
+    transition: border-color 150ms, box-shadow 150ms;
+    outline: none;
+    appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(8,145,178,.1);
+  }
+  input.error, select.error, textarea.error {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px rgba(220,38,38,.08);
+  }
+  .field-error { font-size: 11px; color: var(--danger); display: flex; align-items: center; gap: 4px; }
+  .field-hint  { font-size: 11px; color: var(--text-3); }
+
+  textarea { resize: vertical; min-height: 110px; }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer; }
+
+  /* tag input */
+  .tag-input-wrap {
+    border: 1.5px solid var(--border); border-radius: var(--radius-input);
+    padding: 8px 10px; display: flex; flex-wrap: wrap; gap: 6px; cursor: text;
+    background: var(--surface); min-height: 44px; align-items: center;
+    transition: border-color 150ms;
+  }
+  .tag-input-wrap:focus-within { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(8,145,178,.1); }
+  .tag {
+    display: flex; align-items: center; gap: 5px;
+    background: var(--primary-light); color: var(--primary-dark);
+    padding: 3px 10px 3px 12px; border-radius: var(--radius-pill);
+    font-size: 12px; font-weight: 600;
+  }
+  .tag button { background: none; border: none; cursor: pointer; color: var(--primary); font-size: 14px; line-height: 1; padding: 0 2px; display: flex; }
+  .tag-input-wrap input { border: none; outline: none; font-family: inherit; font-size: 13px; color: var(--text-1); min-width: 120px; flex: 1; padding: 2px 4px; background: transparent; }
+
+  /* salary row */
+  .salary-row { display: grid; grid-template-columns: 1fr 80px 1fr; gap: 10px; align-items: end; }
+  .salary-sep { text-align: center; color: var(--text-3); font-size: 13px; padding-bottom: 10px; }
+
+  /* char count */
+  .char-count { text-align: right; font-size: 11px; color: var(--text-3); margin-top: 4px; }
+
+  /* ── DRAFT INDICATOR ── */
+  .draft-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--warning-light); color: var(--warning);
+    padding: 4px 14px; border-radius: var(--radius-pill);
+    font-size: 12px; font-weight: 600; border: 1px solid #fde68a;
+  }
+  .draft-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--warning); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  /* ── BOTTOM BAR ── */
+  .bottom-bar {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; bottom: 0;
+    margin-left: calc(-32px); /* bleed */
+    gap: 12px;
+  }
+  .bottom-left { display: flex; align-items: center; gap: 12px; }
+  .bottom-right { display: flex; align-items: center; gap: 10px; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 10px 22px; border-radius: var(--radius-pill);
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 150ms; border: none; outline: none;
+    text-decoration: none; white-space: nowrap;
+  }
+  .btn-ghost { background: transparent; color: var(--text-2); border: 1.5px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--text-2); color: var(--text-1); }
+  .btn-secondary { background: var(--surface-2); color: var(--text-1); border: 1.5px solid var(--border); }
+  .btn-secondary:hover { background: var(--bg); border-color: var(--primary-light); }
+  .btn-primary { background: var(--primary); color: #fff; border: 1.5px solid transparent; box-shadow: 0 1px 4px rgba(8,145,178,.3); }
+  .btn-primary:hover { background: var(--primary-dark); box-shadow: 0 2px 8px rgba(8,145,178,.4); }
+  .btn-success { background: var(--accent); color: #fff; border: 1.5px solid transparent; box-shadow: 0 1px 4px rgba(5,150,105,.3); }
+  .btn-success:hover { background: #047857; }
+  .btn-danger { background: var(--danger); color: #fff; border: 1.5px solid transparent; }
+  .btn svg { flex-shrink: 0; }
+
+  /* ── BENEFIT TAGS ── */
+  .benefit-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .benefit-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 14px; border-radius: var(--radius-pill);
+    border: 1.5px solid var(--border); background: var(--surface);
+    font-size: 12px; font-weight: 500; color: var(--text-2); cursor: pointer;
+    transition: all 140ms;
+  }
+  .benefit-tag:hover { border-color: var(--primary); color: var(--primary); }
+  .benefit-tag.selected { background: var(--primary-light); border-color: var(--primary); color: var(--primary-dark); font-weight: 600; }
+
+  /* number stepper */
+  .number-stepper {
+    display: flex; align-items: center; gap: 0;
+    border: 1.5px solid var(--border); border-radius: var(--radius-pill);
+    overflow: hidden; width: fit-content;
+  }
+  .step-btn {
+    width: 36px; height: 36px; background: var(--surface-2); border: none;
+    cursor: pointer; font-size: 18px; color: var(--text-2); display: grid; place-items: center;
+    transition: background 140ms;
+  }
+  .step-btn:hover { background: var(--primary-light); color: var(--primary); }
+  .step-value {
+    width: 48px; text-align: center; font-size: 14px; font-weight: 700;
+    border: none; outline: none; font-family: inherit; color: var(--text-1);
+    background: var(--surface);
+    border-left: 1.5px solid var(--border); border-right: 1.5px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<aside>
+  <div class="logo">
+    <div class="logo-mark">P</div>
+    <div class="logo-text">
+      <span class="plan">Plan P</span>
+      <span class="name">EduVerse</span>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Overview</div>
+    <a class="nav-item" href="#">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Talent</div>
+    <a class="nav-item active" href="#">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      Job Postings
+      <span class="nav-badge">3</span>
+    </a>
+    <a class="nav-item" href="#">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Applicants
+    </a>
+    <a class="nav-item" href="#">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Candidate Search
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Organization</div>
+    <a class="nav-item" href="#">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Organization Profile
+    </a>
+    <a class="nav-item" href="#">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Admin Review
+    </a>
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="org-pill">
+      <div class="org-avatar">MH</div>
+      <div>
+        <div class="org-name">Mayo Healthcare</div>
+        <div class="org-role">Organization Admin</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<main>
+  <header>
+    <div class="breadcrumb">
+      <a href="#">Job Postings</a>
+      <span class="sep">›</span>
+      <span class="current">Create New Posting</span>
+    </div>
+    <div class="header-actions">
+      <div class="draft-pill">
+        <span class="draft-dot"></span>
+        Draft saved 2 min ago
+      </div>
+      <button class="btn-icon notif-dot" title="Notifications">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="page-body">
+    <div class="page-title-row">
+      <div class="page-title">
+        <h1>Create Job Posting</h1>
+        <p>Define and publish a new opportunity for qualified candidates</p>
+      </div>
+    </div>
+
+    <!-- step bar -->
+    <div class="step-bar">
+      <div class="step done">
+        <div class="step-num">✓</div> Basic Info
+      </div>
+      <div class="step active">
+        <div class="step-num">2</div> Job Details
+      </div>
+      <div class="step">
+        <div class="step-num">3</div> Requirements
+      </div>
+      <div class="step">
+        <div class="step-num">4</div> Compensation
+      </div>
+    </div>
+
+    <!-- duplicate warning banner -->
+    <div class="banner warning">
+      <div class="banner-icon">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="banner-body">
+        <strong>Possible duplicate detected</strong>
+        A similar posting "Senior Clinical Educator" in Cardiology was created 3 days ago and is still active.
+        <a href="#" style="color:var(--warning);text-decoration:underline;margin-left:4px;">View existing posting →</a>
+      </div>
+      <button class="banner-close">×</button>
+    </div>
+
+    <!-- Section 1: Basic Info -->
+    <div class="card">
+      <div class="card-title">
+        Basic Information
+        <span class="card-title-badge">Step 1 of 4</span>
+      </div>
+      <div class="form-grid">
+        <div class="field full">
+          <label for="job-title">Job Title <span class="req">*</span></label>
+          <input type="text" id="job-title" value="Senior Clinical Educator" />
+        </div>
+        <div class="field">
+          <label for="department">Department <span class="req">*</span></label>
+          <select id="department">
+            <option>Cardiology</option>
+            <option>Emergency Medicine</option>
+            <option>Nursing Education</option>
+            <option>Pharmacy</option>
+            <option>Radiology</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="employment">Employment Type <span class="req">*</span></label>
+          <select id="employment">
+            <option>Full-time</option>
+            <option>Part-time</option>
+            <option>Contract</option>
+            <option>Fellowship</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="location">Location <span class="req">*</span></label>
+          <input type="text" id="location" value="Boston, MA (Hybrid)" />
+        </div>
+        <div class="field">
+          <label for="openings">
+            Number of Openings <span class="req">*</span>
+            <span class="hint">(1–50)</span>
+          </label>
+          <div class="number-stepper">
+            <button class="step-btn">−</button>
+            <input class="step-value" type="number" id="openings" value="2" min="1" max="50" />
+            <button class="step-btn">+</button>
+          </div>
+          <div class="field-hint">Enter a value between 1 and 50</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Description -->
+    <div class="card">
+      <div class="card-title">
+        Job Description
+        <span class="card-title-badge">Step 2 of 4</span>
+      </div>
+      <div class="form-grid">
+        <div class="field full">
+          <label for="description">Full Description <span class="req">*</span></label>
+          <textarea id="description" style="min-height:140px;">We are seeking a highly skilled Senior Clinical Educator to join our Cardiology department. The successful candidate will be responsible for developing and delivering comprehensive educational programs for clinical staff, ensuring best practices in patient care are maintained and continuously improved.</textarea>
+          <div class="char-count">463 / 3000</div>
+        </div>
+        <div class="field full">
+          <label for="responsibilities">Key Responsibilities <span class="req">*</span></label>
+          <textarea id="responsibilities" style="min-height:100px;">• Design and deliver evidence-based clinical education programs&#10;• Assess competency levels and identify training gaps&#10;• Collaborate with department heads on curriculum development&#10;• Maintain records of education activities and outcomes</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Requirements -->
+    <div class="card">
+      <div class="card-title">
+        Requirements
+        <span class="card-title-badge">Step 3 of 4</span>
+      </div>
+      <div class="form-grid">
+        <div class="field full">
+          <label>Required Qualifications <span class="req">*</span></label>
+          <div class="tag-input-wrap" id="quals-wrap">
+            <div class="tag">BSN or MSN <button>×</button></div>
+            <div class="tag">Clinical License <button>×</button></div>
+            <div class="tag">BLS/ACLS Certified <button>×</button></div>
+            <input type="text" placeholder="Add qualification and press Enter…" />
+          </div>
+          <div class="field-hint">Press Enter to add each qualification</div>
+        </div>
+        <div class="field">
+          <label for="experience">Experience Level <span class="req">*</span></label>
+          <select id="experience">
+            <option>Mid-level (3–5 years)</option>
+            <option>Senior (5–8 years)</option>
+            <option>Principal (8+ years)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="education">Education Requirement <span class="req">*</span></label>
+          <select id="education">
+            <option>Master's Degree</option>
+            <option>Bachelor's Degree</option>
+            <option>Doctorate / PhD</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label>Preferred Certifications</label>
+          <div class="tag-input-wrap">
+            <div class="tag">AACN Certification <button>×</button></div>
+            <div class="tag">CNE <button>×</button></div>
+            <input type="text" placeholder="Add certification and press Enter…" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: Compensation -->
+    <div class="card">
+      <div class="card-title">
+        Compensation &amp; Benefits
+        <span class="card-title-badge">Step 4 of 4</span>
+      </div>
+      <div class="form-grid">
+        <div class="field full">
+          <label>Salary Range <span class="req">*</span></label>
+          <div class="salary-row">
+            <input type="text" placeholder="Min e.g. 85,000" value="85,000" />
+            <div class="salary-sep">to</div>
+            <input type="text" placeholder="Max e.g. 110,000" value="110,000" />
+          </div>
+          <div class="field-hint">Annual salary in USD. Enter 0 for unpaid / voluntary positions.</div>
+        </div>
+        <div class="field">
+          <label for="pay-type">Pay Structure</label>
+          <select id="pay-type">
+            <option>Annual Salary</option>
+            <option>Hourly Rate</option>
+            <option>Stipend</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="visibility">Salary Visibility</label>
+          <select id="visibility">
+            <option>Show range on posting</option>
+            <option>Hide (discuss with candidates)</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label>Benefits Package</label>
+          <div class="benefit-list">
+            <div class="benefit-tag selected">Health Insurance</div>
+            <div class="benefit-tag selected">Dental &amp; Vision</div>
+            <div class="benefit-tag selected">CME Allowance</div>
+            <div class="benefit-tag selected">401(k) Match</div>
+            <div class="benefit-tag">Relocation Assistance</div>
+            <div class="benefit-tag">Student Loan Repayment</div>
+            <div class="benefit-tag selected">Flexible Schedule</div>
+            <div class="benefit-tag">Signing Bonus</div>
+            <div class="benefit-tag">Remote Option</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- validation error example -->
+    <div class="banner danger" style="display:none" id="err-banner">
+      <div class="banner-icon">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <div class="banner-body">
+        <strong>3 required fields are incomplete</strong>
+        Please fill in Job Title, Department, and Number of Openings before submitting.
+      </div>
+    </div>
+
+  </div><!-- /page-body -->
+
+  <!-- bottom bar -->
+  <div class="bottom-bar">
+    <div class="bottom-left">
+      <button class="btn btn-ghost">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Previous
+      </button>
+    </div>
+    <div class="bottom-right">
+      <button class="btn btn-secondary">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save as Draft
+      </button>
+      <button class="btn btn-primary">
+        Next Step
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <button class="btn btn-success">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+        Submit for Review
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  // benefit tag toggle
+  document.querySelectorAll('.benefit-tag').forEach(t => {
+    t.addEventListener('click', () => t.classList.toggle('selected'));
+  });
+
+  // number stepper
+  const stepBtns = document.querySelectorAll('.step-btn');
+  const val = document.getElementById('openings');
+  stepBtns[0].addEventListener('click', () => { if(+val.value > 1) val.value = +val.value - 1; });
+  stepBtns[1].addEventListener('click', () => { if(+val.value < 50) val.value = +val.value + 1; });
+
+  // char count
+  const desc = document.getElementById('description');
+  const cc = document.querySelector('.char-count');
+  desc.addEventListener('input', () => { cc.textContent = desc.value.length + ' / 3000'; });
+</script>
+</body>
+</html>
