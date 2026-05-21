@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>US15 — Job Details | EduVerse Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:       #0891B2;
+      --primary-dark:  #0e7490;
+      --primary-light: #e0f2fe;
+      --accent:        #059669;
+      --accent-light:  #dcfce7;
+      --warn:          #d97706;
+      --warn-light:    #fef3c7;
+      --danger:        #dc2626;
+      --danger-light:  #fee2e2;
+      --purple:        #7c3aed;
+      --purple-light:  #ede9fe;
+      --bg:            #f0f9ff;
+      --surface:       #ffffff;
+      --border:        #e5e7eb;
+      --text-1:        #0f172a;
+      --text-2:        #374151;
+      --text-3:        #64748b;
+      --text-4:        #94a3b8;
+      --radius-pill:   9999px;
+      --radius-card:   16px;
+      --sidebar-w:     248px;
+      --header-h:      64px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text-1);
+      display: flex;
+      min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Skip link ── */
+    .skip-link {
+      position: absolute; left: -9999px; top: auto; width: 1px; height: 1px;
+      overflow: hidden; background: var(--primary); color: #fff; padding: 8px 16px;
+      font-weight: 600; border-radius: 0 0 8px 0; z-index: 9999; text-decoration: none;
+    }
+    .skip-link:focus { position: fixed; left: 0; top: 0; width: auto; height: auto; overflow: visible; }
+
+    /* ─────────────────────── SIDEBAR ─────────────────────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--primary);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; height: 100vh;
+      z-index: 100;
+    }
+
+    .sidebar-logo {
+      display: flex; align-items: center; gap: 10px;
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+    }
+    .logo-mark {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(255,255,255,.2); display: grid; place-items: center; flex-shrink: 0;
+    }
+    .logo-mark svg { color: #fff; }
+    .logo-text { display: flex; flex-direction: column; }
+    .logo-name { font-size: 15px; font-weight: 700; color: #fff; }
+    .logo-sub  { font-size: 10px; color: #bae6fd; }
+
+    .nav { padding: 12px 0; flex: 1; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 18px; cursor: pointer; color: #bae6fd;
+      font-size: 13px; font-weight: 500; position: relative;
+      transition: background 140ms, color 140ms;
+      touch-action: manipulation;
+    }
+    .nav-item:hover { background: rgba(255,255,255,.08); color: #fff; }
+    .nav-item.active { background: var(--primary-dark); color: #fff; font-weight: 600; }
+    .nav-item.active::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; background: #fff; border-radius: 0 2px 2px 0;
+    }
+    .nav-icon { width: 18px; height: 18px; opacity: .85; flex-shrink: 0; }
+    .nav-item.active .nav-icon { opacity: 1; }
+
+    /* ─────────────────────── LAYOUT ─────────────────────── */
+    .layout { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* ─────────────────────── HEADER ─────────────────────── */
+    .header {
+      height: var(--header-h);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .header-left { display: flex; flex-direction: column; gap: 2px; }
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--text-3);
+    }
+    .breadcrumb a { color: var(--primary); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-4); }
+    .page-title { font-size: 18px; font-weight: 700; color: var(--text-1); }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 0 16px; height: 36px; border-radius: var(--radius-pill);
+      font-family: inherit; font-size: 13px; font-weight: 600;
+      cursor: pointer; border: none; transition: background 150ms, color 150ms, box-shadow 150ms;
+      text-decoration: none; touch-action: manipulation; white-space: nowrap;
+    }
+    .btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    .btn-ghost  { background: transparent; color: var(--text-2); border: 1.5px solid var(--border); }
+    .btn-ghost:hover  { border-color: var(--primary); color: var(--primary); }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-danger  { background: var(--danger-light); color: var(--danger); border: 1.5px solid #fecaca; }
+    .btn-danger:hover  { background: var(--danger); color: #fff; }
+
+    /* ─────────────────────── TAB BAR ─────────────────────── */
+    .tab-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .tab-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 0 18px; height: 44px;
+      background: transparent; border: none; cursor: pointer;
+      font-family: inherit; font-size: 13px; font-weight: 500; color: var(--text-3);
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      transition: color 140ms, border-color 140ms;
+      touch-action: manipulation;
+    }
+    .tab-btn:hover { color: var(--primary); }
+    .tab-btn.active { color: var(--primary); font-weight: 600; border-bottom-color: var(--primary); }
+    .tab-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+    .tab-count {
+      background: var(--primary-light); color: var(--primary);
+      font-size: 11px; font-weight: 700; padding: 1px 7px;
+      border-radius: var(--radius-pill);
+    }
+    .tab-btn.active .tab-count { background: var(--primary); color: #fff; }
+
+    /* ─────────────────────── MAIN CONTENT ─────────────────────── */
+    .main {
+      padding: 24px 28px 40px;
+      display: flex; flex-direction: column; gap: 20px;
+      flex: 1;
+    }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    /* ─────────────────────── JOB HERO BANNER ─────────────────────── */
+    .job-hero {
+      background: var(--surface);
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border);
+      padding: 20px 24px;
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 24px;
+    }
+    .job-hero-info { flex: 1; }
+    .job-hero-title { font-size: 22px; font-weight: 700; color: var(--text-1); margin-bottom: 6px; }
+    .job-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .job-meta-item { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--text-2); }
+    .job-meta-sep { color: var(--border); }
+    .hero-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 12px; border-radius: var(--radius-pill);
+      font-size: 11px; font-weight: 600;
+    }
+    .badge-active   { background: var(--accent-light); color: var(--accent); }
+    .badge-deadline { background: var(--primary-light); color: var(--primary); }
+    .badge-views    { background: #f3f4f6; color: var(--text-2); }
+    .job-hero-stats { display: flex; gap: 0; }
+    .hero-stat {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 4px 24px; border-left: 1px solid var(--border);
+    }
+    .hero-stat-val { font-size: 26px; font-weight: 700; line-height: 1.1; }
+    .hero-stat-lbl { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+
+    /* ─────────────────────── CONTENT GRID ─────────────────────── */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+      align-items: start;
+    }
+    .left-col  { display: flex; flex-direction: column; gap: 16px; }
+    .right-col { display: flex; flex-direction: column; gap: 16px; }
+
+    /* ─────────────────────── CARDS ─────────────────────── */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-title {
+      font-size: 14px; font-weight: 700; color: var(--text-1);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card-title-bar { width: 3px; height: 16px; background: var(--primary); border-radius: 2px; }
+    .card-body { padding: 20px; }
+
+    /* ─────────────────────── JOB DESCRIPTION ─────────────────────── */
+    .desc-text {
+      font-size: 14px; line-height: 1.75; color: var(--text-2);
+    }
+    .desc-text p + p { margin-top: 12px; }
+    .show-more-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: none; border: none; cursor: pointer; color: var(--primary);
+      font-size: 13px; font-weight: 600; padding: 8px 0 0; touch-action: manipulation;
+    }
+    .show-more-btn:focus-visible { outline: 2px solid var(--primary); border-radius: 4px; }
+
+    /* ─────────────────────── REQUIREMENTS ─────────────────────── */
+    .req-list { display: flex; flex-direction: column; gap: 10px; }
+    .req-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 12px 14px; background: var(--bg); border-radius: 10px;
+    }
+    .req-icon {
+      width: 22px; height: 22px; background: var(--accent-light); border-radius: 50%;
+      display: grid; place-items: center; flex-shrink: 0; margin-top: 1px;
+    }
+    .req-icon svg { color: var(--accent); }
+    .req-label { font-size: 12px; font-weight: 600; color: var(--text-3); margin-bottom: 2px; }
+    .req-value { font-size: 13px; font-weight: 500; color: var(--text-1); }
+
+    /* Skill tags */
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+    .tag {
+      padding: 3px 12px; border-radius: var(--radius-pill);
+      font-size: 11px; font-weight: 600;
+      background: var(--primary-light); color: var(--primary);
+    }
+
+    /* ─────────────────────── INTERVIEW STEPS ─────────────────────── */
+    .steps-list { display: flex; flex-direction: column; gap: 0; }
+    .step-row {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .step-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--primary); color: #fff;
+      display: grid; place-items: center; font-size: 12px; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .step-num.done { background: var(--accent); }
+    .step-info { flex: 1; }
+    .step-title { font-size: 13px; font-weight: 600; color: var(--text-1); }
+    .step-sub   { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+    .step-duration {
+      padding: 2px 10px; border-radius: var(--radius-pill);
+      background: var(--bg); color: var(--text-2);
+      font-size: 11px; font-weight: 500; white-space: nowrap;
+    }
+
+    /* ─────────────────────── RIGHT COLUMN DETAILS ─────────────────────── */
+    .detail-list { display: flex; flex-direction: column; gap: 12px; }
+    .detail-row  { display: flex; align-items: flex-start; gap: 10px; }
+    .detail-icon {
+      width: 32px; height: 32px; background: var(--bg); border-radius: 8px;
+      display: grid; place-items: center; flex-shrink: 0;
+    }
+    .detail-icon svg { color: var(--primary); }
+    .detail-lbl { font-size: 11px; color: var(--text-3); font-weight: 500; }
+    .detail-val { font-size: 13px; font-weight: 600; color: var(--text-1); }
+
+    /* ─────────────────────── BENEFITS ─────────────────────── */
+    .benefits-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    }
+    .benefit-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px; border-radius: 8px; border: 1.5px solid var(--border);
+      font-size: 12px; font-weight: 500; color: var(--text-2);
+    }
+    .benefit-item.active { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+    .benefit-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+      background: var(--border);
+    }
+    .benefit-item.active .benefit-dot { background: var(--accent); }
+
+    /* ─────────────────────── QUICK ACTIONS ─────────────────────── */
+    .quick-actions { display: flex; flex-direction: column; gap: 8px; }
+    .action-btn {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-radius: 10px; border: 1.5px solid var(--border);
+      background: var(--surface); cursor: pointer; font-family: inherit;
+      font-size: 13px; font-weight: 500; color: var(--text-2);
+      transition: border-color 140ms, color 140ms, background 140ms;
+      touch-action: manipulation;
+    }
+    .action-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+    .action-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    .action-btn.danger:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-light); }
+    .action-btn svg { flex-shrink: 0; }
+
+    /* ─────────────────────── APPLICANTS TAB ─────────────────────── */
+    .applicants-panel { display: none; }
+    .applicants-panel.active-panel { display: block; }
+    .job-info-panel { display: block; }
+    .job-info-panel.hidden-panel { display: none; }
+
+    /* ─────────────────────── APPLICANT TABLE ─────────────────────── */
+    .table-toolbar {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      padding: 16px 20px 0;
+    }
+    .search-input-wrap {
+      position: relative; flex: 1; min-width: 200px;
+    }
+    .search-input-icon {
+      position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+      color: var(--text-4); pointer-events: none;
+    }
+    .search-input {
+      width: 100%; height: 36px; padding: 0 12px 0 34px;
+      border: 1.5px solid var(--border); border-radius: var(--radius-pill);
+      font-family: inherit; font-size: 13px; color: var(--text-1);
+      background: var(--bg); transition: border-color 150ms, box-shadow 150ms;
+    }
+    .search-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(8,145,178,.12); }
+    .search-input::placeholder { color: var(--text-4); }
+
+    .status-filter {
+      display: flex; gap: 6px; flex-wrap: wrap;
+      padding: 12px 20px 0;
+    }
+    .sf-pill {
+      padding: 4px 14px; border-radius: var(--radius-pill);
+      border: none; cursor: pointer; font-family: inherit;
+      font-size: 12px; font-weight: 600; color: var(--text-2);
+      background: var(--bg); transition: background 140ms, color 140ms;
+      touch-action: manipulation;
+    }
+    .sf-pill:hover { background: var(--primary-light); color: var(--primary); }
+    .sf-pill.active { background: var(--primary); color: #fff; }
+    .sf-pill:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+    .applicant-table { width: 100%; border-collapse: collapse; }
+    .applicant-table th {
+      padding: 10px 14px; text-align: left;
+      font-size: 11px; font-weight: 600; color: var(--text-3);
+      background: #f8fafc; border-bottom: 1px solid var(--border);
+    }
+    .applicant-table th:first-child { padding-left: 20px; }
+    .applicant-table th:last-child  { padding-right: 20px; }
+    .applicant-table td {
+      padding: 0 14px; height: 60px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .applicant-table td:first-child { padding-left: 20px; }
+    .applicant-table td:last-child  { padding-right: 20px; }
+    .applicant-table tr:last-child td { border-bottom: none; }
+    .applicant-table tr:nth-child(even) td { background: #fafafa; }
+    .applicant-table tr:hover td { background: var(--primary-light); }
+
+    .applicant-cell { display: flex; align-items: center; gap: 10px; }
+    .avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--primary-light); display: grid; place-items: center;
+      font-size: 13px; font-weight: 700; color: var(--primary); flex-shrink: 0;
+    }
+    .applicant-name  { font-size: 13px; font-weight: 600; color: var(--text-1); }
+    .applicant-role  { font-size: 11px; color: var(--text-3); }
+
+    .status-pill {
+      display: inline-block; padding: 3px 10px;
+      border-radius: var(--radius-pill); font-size: 11px; font-weight: 600;
+    }
+    .s-applied    { background: var(--primary-light); color: var(--primary); }
+    .s-review     { background: var(--warn-light); color: var(--warn); }
+    .s-interview  { background: #dbeafe; color: #1d4ed8; }
+    .s-offer      { background: var(--accent-light); color: var(--accent); }
+    .s-hired      { background: #f0fdf4; color: #16a34a; }
+    .s-rejected   { background: var(--danger-light); color: var(--danger); }
+
+    .score { font-size: 13px; font-weight: 700; }
+    .score-high { color: var(--accent); }
+    .score-mid  { color: var(--warn); }
+    .score-low  { color: var(--danger); }
+
+    .row-actions { display: flex; gap: 6px; }
+    .row-btn {
+      padding: 4px 12px; border-radius: var(--radius-pill);
+      border: 1.5px solid var(--border); background: var(--surface);
+      cursor: pointer; font-family: inherit; font-size: 11px; font-weight: 600;
+      color: var(--text-2); transition: border-color 140ms, color 140ms, background 140ms;
+      touch-action: manipulation;
+    }
+    .row-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .row-btn.primary-row { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+    .row-btn.primary-row:hover { background: var(--accent); color: #fff; }
+    .row-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+    .table-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-top: 1px solid var(--border);
+    }
+    .pagination { display: flex; align-items: center; gap: 6px; }
+    .page-btn {
+      width: 32px; height: 32px; border-radius: var(--radius-pill);
+      display: grid; place-items: center;
+      border: 1.5px solid var(--border); background: var(--surface);
+      cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600;
+      color: var(--text-2); transition: background 140ms, color 140ms, border-color 140ms;
+      touch-action: manipulation;
+    }
+    .page-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .page-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .page-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to main content</a>
+<div aria-live="polite" aria-atomic="true" class="sr-only" id="status-announcer"></div>
+
+<!-- ══════════════════ SIDEBAR ══════════════════ -->
+<aside class="sidebar" aria-label="Main navigation">
+  <div class="sidebar-logo">
+    <div class="logo-mark" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h3a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h3a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+    </div>
+    <div class="logo-text">
+      <span class="logo-name">EduVerse</span>
+      <span class="logo-sub">University Portal</span>
+    </div>
+  </div>
+
+  <nav class="nav" aria-label="Sidebar navigation">
+    <a href="#" class="nav-item" aria-label="Dashboard">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+      Dashboard
+    </a>
+    <a href="#" class="nav-item active" aria-current="page" aria-label="Job Postings">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
+      Job Postings
+    </a>
+    <a href="#" class="nav-item" aria-label="Applicants">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+      Applicants
+    </a>
+    <a href="#" class="nav-item" aria-label="Candidates">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+      Candidates
+    </a>
+    <a href="#" class="nav-item" aria-label="Analytics">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+      Analytics
+    </a>
+    <a href="#" class="nav-item" aria-label="Settings">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+      Settings
+    </a>
+  </nav>
+</aside>
+
+<!-- ══════════════════ MAIN LAYOUT ══════════════════ -->
+<div class="layout">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="#">Job Postings</a>
+        <span class="breadcrumb-sep" aria-hidden="true">›</span>
+        <span aria-current="page">Senior Nurse Practitioner</span>
+      </nav>
+      <h1 class="page-title">Senior Nurse Practitioner</h1>
+    </div>
+    <div class="header-right">
+      <button type="button" class="btn btn-ghost" aria-label="Share job posting">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/></svg>
+        Share
+      </button>
+      <button type="button" class="btn btn-ghost" aria-label="Edit this job posting">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
+        Edit Posting
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close this job posting">
+        Close Posting
+      </button>
+    </div>
+  </header>
+
+  <!-- TAB BAR -->
+  <div class="tab-bar" role="tablist" aria-label="Job details tabs">
+    <button type="button" class="tab-btn active" role="tab" aria-selected="true"
+            aria-controls="panel-job-info" id="tab-job-info"
+            onclick="switchTab('job-info')">
+      <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/></svg>
+      Job Info
+    </button>
+    <button type="button" class="tab-btn" role="tab" aria-selected="false"
+            aria-controls="panel-applicants" id="tab-applicants"
+            onclick="switchTab('applicants')">
+      <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" aria-hidden="true"/></svg>
+      Applicants
+      <span class="tab-count">47</span>
+    </button>
+  </div>
+
+  <!-- ══════ MAIN CONTENT ══════ -->
+  <main id="main-content" class="main">
+
+    <!-- JOB HERO BANNER (always visible) -->
+    <div class="job-hero">
+      <div class="job-hero-info">
+        <h2 class="job-hero-title">Senior Nurse Practitioner</h2>
+        <div class="job-meta">
+          <span class="job-meta-item">
+            <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v7a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/></svg>
+            Cardiology Department
+          </span>
+          <span class="job-meta-sep" aria-hidden="true">·</span>
+          <span class="job-meta-item">
+            <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+            Hospital Campus, Building A
+          </span>
+          <span class="job-meta-sep" aria-hidden="true">·</span>
+          <span class="job-meta-item">Full-time</span>
+          <span class="job-meta-sep" aria-hidden="true">·</span>
+          <span class="job-meta-item">Posted Jan 15, 2026</span>
+        </div>
+        <div class="hero-badges">
+          <span class="badge badge-active">Active</span>
+          <span class="badge badge-deadline">Closes Feb 28, 2026</span>
+          <span class="badge badge-views">
+            <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg>
+            284 views
+          </span>
+        </div>
+      </div>
+      <div class="job-hero-stats" role="list" aria-label="Application statistics">
+        <div class="hero-stat" role="listitem">
+          <span class="hero-stat-val" style="color:var(--primary)">47</span>
+          <span class="hero-stat-lbl">Total</span>
+        </div>
+        <div class="hero-stat" role="listitem">
+          <span class="hero-stat-val" style="color:var(--accent)">12</span>
+          <span class="hero-stat-lbl">New</span>
+        </div>
+        <div class="hero-stat" role="listitem">
+          <span class="hero-stat-val" style="color:#1d4ed8">8</span>
+          <span class="hero-stat-lbl">Interview</span>
+        </div>
+        <div class="hero-stat" role="listitem">
+          <span class="hero-stat-val" style="color:var(--warn)">3</span>
+          <span class="hero-stat-lbl">Offers</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════ TAB PANEL: JOB INFO ══════ -->
+    <div id="panel-job-info" role="tabpanel" aria-labelledby="tab-job-info" class="job-info-panel">
+      <div class="content-grid">
+
+        <!-- LEFT COLUMN -->
+        <div class="left-col">
+
+          <!-- About this role -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <span class="card-title-bar" aria-hidden="true"></span>
+                About This Role
+              </h3>
+            </div>
+            <div class="card-body">
+              <div class="desc-text">
+                <p>We are seeking an experienced and compassionate <strong>Senior Nurse Practitioner</strong> to join our growing Cardiology Department. In this role, you will collaborate with a multidisciplinary team to deliver exceptional patient care, mentor junior nursing staff, and contribute to quality improvement initiatives across the department.</p>
+                <p>The ideal candidate brings clinical expertise, a patient-first approach, and the ability to work effectively in a fast-paced hospital environment. You will manage complex patient cases, perform advanced clinical assessments, and develop individualized care plans in alignment with department protocols.</p>
+                <p>This position offers significant growth opportunities, including leadership responsibilities and involvement in research and education programs at EduVerse Hospital.</p>
+              </div>
+              <button type="button" class="show-more-btn" aria-label="Show full job description">
+                <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                Show full description
+              </button>
+            </div>
+          </div>
+
+          <!-- Requirements -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <span class="card-title-bar" aria-hidden="true"></span>
+                Requirements &amp; Qualifications
+              </h3>
+            </div>
+            <div class="card-body">
+              <div class="req-list">
+                <div class="req-item">
+                  <div class="req-icon" aria-hidden="true">
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/></svg>
+                  </div>
+                  <div>
+                    <div class="req-label">Education</div>
+                    <div class="req-value">BSN or MSN Degree — Nursing</div>
+                  </div>
+                </div>
+                <div class="req-item">
+                  <div class="req-icon" aria-hidden="true">
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+                  </div>
+                  <div>
+                    <div class="req-label">Experience</div>
+                    <div class="req-value">2+ years clinical experience in acute or critical care</div>
+                  </div>
+                </div>
+                <div class="req-item">
+                  <div class="req-icon" aria-hidden="true">
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                  </div>
+                  <div>
+                    <div class="req-label">Certification</div>
+                    <div class="req-value">BLS/ACLS Certification — required before start date</div>
+                  </div>
+                </div>
+                <div class="req-item">
+                  <div class="req-icon" aria-hidden="true">
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+                  </div>
+                  <div>
+                    <div class="req-label">License</div>
+                    <div class="req-value">Current RN or NP license — state of practice</div>
+                  </div>
+                </div>
+              </div>
+              <div class="tags" aria-label="Required skills">
+                <span class="tag">Critical Care</span>
+                <span class="tag">Patient Assessment</span>
+                <span class="tag">EHR Systems</span>
+                <span class="tag">Team Leadership</span>
+                <span class="tag">Clinical Research</span>
+                <span class="tag">ACLS</span>
+                <span class="tag">Cardiology</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interview Process -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <span class="card-title-bar" aria-hidden="true"></span>
+                Interview Process
+              </h3>
+              <span style="font-size:12px;color:var(--text-3)">Avg. 2–3 weeks</span>
+            </div>
+            <div class="card-body">
+              <ol class="steps-list" aria-label="Interview stages">
+                <li class="step-row">
+                  <div class="step-num done" aria-label="Step 1 completed">1</div>
+                  <div class="step-info">
+                    <div class="step-title">Application Review</div>
+                    <div class="step-sub">HR screens CV &amp; cover letter against requirements</div>
+                  </div>
+                  <span class="step-duration">1–3 days</span>
+                </li>
+                <li class="step-row">
+                  <div class="step-num" aria-label="Step 2">2</div>
+                  <div class="step-info">
+                    <div class="step-title">Phone Screen</div>
+                    <div class="step-sub">30-minute call with Talent Acquisition team</div>
+                  </div>
+                  <span class="step-duration">30 min</span>
+                </li>
+                <li class="step-row">
+                  <div class="step-num" aria-label="Step 3">3</div>
+                  <div class="step-info">
+                    <div class="step-title">Clinical Skills Interview</div>
+                    <div class="step-sub">Technical interview with Cardiology Department lead</div>
+                  </div>
+                  <span class="step-duration">60 min</span>
+                </li>
+                <li class="step-row">
+                  <div class="step-num" aria-label="Step 4">4</div>
+                  <div class="step-info">
+                    <div class="step-title">Final Panel Interview</div>
+                    <div class="step-sub">Panel with Chief Nursing Officer &amp; Department Head</div>
+                  </div>
+                  <span class="step-duration">60 min</span>
+                </li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="right-col">
+
+          <!-- Job Details -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <span class="card-title-bar" aria-hidden="true"></span>
+                Job Details
+              </h3>
+            </div>
+            <div class="card-body">
+              <dl class="detail-list">
+                <div class="detail-row">
+                  <div class="detail-icon" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v7a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/></svg>
+                  </div>
+                  <div>
+                    <dt class="detail-lbl">Department</dt>
+                    <dd class="detail-val">Cardiology</dd>
+                  </div>
+                </div>
+                <div class="detail-row">
+                  <div class="detail-icon" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+                  </div>
+                  <div>
+                    <dt class="detail-lbl">Location</dt>
+                    <dd class="detail-val">Hospital Campus, Building A</dd>
+                  </div>
+                </div>
+                <div class="detail-row">
+                  <div class="detail-icon" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+                  </div>
+                  <div>
+                    <dt class="detail-lbl">Employment Type</dt>
+                    <dd class="detail-val">Full-time</dd>
+                  </div>
+                </div>
+                <div class="detail-row">
+                  <div class="detail-icon" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/></svg>
+                  </div>
+                  <div>
+                    <dt class="detail-lbl">Salary Range</dt>
+                    <dd class="detail-val">$75,000 – $110,000 / year</dd>
+                  </div>
+                </div>
+                <div class="detail-row">
+                  <div class="detail-icon" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+                  </div>
+                  <div>
+                    <dt class="detail-lbl">Positions Available</dt>
+                    <dd class="detail-val">2 openings</dd>
+                  </div>
+                </div>
+                <div class="detail-row">
+                  <div class="detail-icon" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+                  </div>
+                  <div>
+                    <dt class="detail-lbl">Application Deadline</dt>
+                    <dd class="detail-val">February 28, 2026</dd>
+                  </div>
+                </div>
+              </dl>
+            </div>
+          </div>
+
+          <!-- Benefits -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <span class="card-title-bar" aria-hidden="true"></span>
+                Benefits
+              </h3>
+            </div>
+            <div class="card-body">
+              <div class="benefits-grid" role="list" aria-label="Employee benefits">
+                <div class="benefit-item active" role="listitem">
+                  <span class="benefit-dot" aria-hidden="true"></span>Health Insurance
+                </div>
+                <div class="benefit-item active" role="listitem">
+                  <span class="benefit-dot" aria-hidden="true"></span>Dental
+                </div>
+                <div class="benefit-item" role="listitem">
+                  <span class="benefit-dot" aria-hidden="true"></span>Vision
+                </div>
+                <div class="benefit-item active" role="listitem">
+                  <span class="benefit-dot" aria-hidden="true"></span>401(k)
+                </div>
+                <div class="benefit-item active" role="listitem">
+                  <span class="benefit-dot" aria-hidden="true"></span>PTO (20 days)
+                </div>
+                <div class="benefit-item" role="listitem">
+                  <span class="benefit-dot" aria-hidden="true"></span>Remote Option
+                </div>
+                <div class="benefit-item active" role="listitem">
+                  <span class="benefit-dot" aria-hidden="true"></span>CME Allowance
+                </div>
+                <div class="benefit-item active" role="listitem">
+                  <span class="benefit-dot" aria-hidden="true"></span>Tuition Assist
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <span class="card-title-bar" aria-hidden="true"></span>
+                Quick Actions
+              </h3>
+            </div>
+            <div class="card-body" style="padding-top:12px">
+              <div class="quick-actions">
+                <button type="button" class="action-btn" aria-label="Edit this posting">
+                  <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
+                  Edit Posting
+                </button>
+                <button type="button" class="action-btn" aria-label="Duplicate this posting">
+                  <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M7 9a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9z"/><path d="M5 3a2 2 0 00-2 2v6a2 2 0 002 2V5h8a2 2 0 00-2-2H5z"/></svg>
+                  Duplicate Posting
+                </button>
+                <button type="button" class="action-btn" aria-label="Download job posting as PDF">
+                  <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                  Download PDF
+                </button>
+                <button type="button" class="action-btn danger" aria-label="Close this job posting">
+                  <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                  Close Posting
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div><!-- /panel-job-info -->
+
+    <!-- ══════ TAB PANEL: APPLICANTS ══════ -->
+    <div id="panel-applicants" role="tabpanel" aria-labelledby="tab-applicants" class="applicants-panel">
+      <div class="card">
+
+        <div class="table-toolbar">
+          <div class="search-input-wrap">
+            <svg class="search-input-icon" width="14" height="14" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+            <input type="search" class="search-input" placeholder="Search applicants by name, degree, status…"
+                   aria-label="Search applicants" />
+          </div>
+          <button type="button" class="btn btn-ghost" aria-label="Export applicant list">
+            <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+            Export
+          </button>
+        </div>
+
+        <div class="status-filter" role="group" aria-label="Filter applicants by status">
+          <button type="button" class="sf-pill active" onclick="setFilter(this)">All <strong>(47)</strong></button>
+          <button type="button" class="sf-pill" onclick="setFilter(this)">Applied (12)</button>
+          <button type="button" class="sf-pill" onclick="setFilter(this)">Under Review (8)</button>
+          <button type="button" class="sf-pill" onclick="setFilter(this)">Interview (8)</button>
+          <button type="button" class="sf-pill" onclick="setFilter(this)">Offer (3)</button>
+          <button type="button" class="sf-pill" onclick="setFilter(this)">Hired (2)</button>
+          <button type="button" class="sf-pill" onclick="setFilter(this)">Rejected (14)</button>
+        </div>
+
+        <div style="overflow-x:auto; margin-top:12px;">
+          <table class="applicant-table" aria-label="Applicants list">
+            <thead>
+              <tr>
+                <th scope="col">Applicant</th>
+                <th scope="col">Applied</th>
+                <th scope="col">Experience</th>
+                <th scope="col">Status</th>
+                <th scope="col">Match Score</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="applicant-cell">
+                    <div class="avatar" aria-hidden="true">S</div>
+                    <div>
+                      <div class="applicant-name">Sarah Johnson</div>
+                      <div class="applicant-role">RN, BSN · 6 yrs</div>
+                    </div>
+                  </div>
+                </td>
+                <td>Jan 20</td>
+                <td>6 years</td>
+                <td><span class="status-pill s-interview">Interview Scheduled</span></td>
+                <td><span class="score score-high">94%</span></td>
+                <td>
+                  <div class="row-actions">
+                    <button type="button" class="row-btn" aria-label="View Sarah Johnson's profile">View</button>
+                    <button type="button" class="row-btn primary-row" aria-label="Schedule interview with Sarah Johnson">Schedule</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="applicant-cell">
+                    <div class="avatar" aria-hidden="true">M</div>
+                    <div>
+                      <div class="applicant-name">Michael Chen</div>
+                      <div class="applicant-role">NP · 4 yrs</div>
+                    </div>
+                  </div>
+                </td>
+                <td>Jan 19</td>
+                <td>4 years</td>
+                <td><span class="status-pill s-review">Under Review</span></td>
+                <td><span class="score score-high">87%</span></td>
+                <td>
+                  <div class="row-actions">
+                    <button type="button" class="row-btn" aria-label="View Michael Chen's profile">View</button>
+                    <button type="button" class="row-btn primary-row" aria-label="Schedule interview with Michael Chen">Schedule</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="applicant-cell">
+                    <div class="avatar" style="background:var(--accent-light);color:var(--accent)" aria-hidden="true">A</div>
+                    <div>
+                      <div class="applicant-name">Aisha Rahman</div>
+                      <div class="applicant-role">MSN · 8 yrs</div>
+                    </div>
+                  </div>
+                </td>
+                <td>Jan 18</td>
+                <td>8 years</td>
+                <td><span class="status-pill s-offer">Offer Extended</span></td>
+                <td><span class="score score-high">96%</span></td>
+                <td>
+                  <div class="row-actions">
+                    <button type="button" class="row-btn" aria-label="View Aisha Rahman's profile">View</button>
+                    <button type="button" class="row-btn primary-row" aria-label="Track offer for Aisha Rahman">Track Offer</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="applicant-cell">
+                    <div class="avatar" aria-hidden="true">D</div>
+                    <div>
+                      <div class="applicant-name">David Torres</div>
+                      <div class="applicant-role">BSN · 2 yrs</div>
+                    </div>
+                  </div>
+                </td>
+                <td>Jan 17</td>
+                <td>2 years</td>
+                <td><span class="status-pill s-applied">Applied</span></td>
+                <td><span class="score score-mid">72%</span></td>
+                <td>
+                  <div class="row-actions">
+                    <button type="button" class="row-btn" aria-label="View David Torres's profile">View</button>
+                    <button type="button" class="row-btn" aria-label="Move David Torres to review">Review</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="applicant-cell">
+                    <div class="avatar" style="background:#fee2e2;color:#dc2626" aria-hidden="true">E</div>
+                    <div>
+                      <div class="applicant-name">Emma Wilson</div>
+                      <div class="applicant-role">RN · 5 yrs</div>
+                    </div>
+                  </div>
+                </td>
+                <td>Jan 16</td>
+                <td>5 years</td>
+                <td><span class="status-pill s-rejected">Rejected</span></td>
+                <td><span class="score score-low">61%</span></td>
+                <td>
+                  <div class="row-actions">
+                    <button type="button" class="row-btn" aria-label="View Emma Wilson's profile">View</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="applicant-cell">
+                    <div class="avatar" style="background:#f0fdf4;color:#16a34a" aria-hidden="true">J</div>
+                    <div>
+                      <div class="applicant-name">James Park</div>
+                      <div class="applicant-role">MSN · 10 yrs</div>
+                    </div>
+                  </div>
+                </td>
+                <td>Jan 15</td>
+                <td>10 years</td>
+                <td><span class="status-pill s-hired">Hired</span></td>
+                <td><span class="score score-high">99%</span></td>
+                <td>
+                  <div class="row-actions">
+                    <button type="button" class="row-btn" aria-label="View James Park's profile">View</button>
+                    <button type="button" class="row-btn primary-row" aria-label="Begin onboarding for James Park">Onboard</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-footer">
+          <span style="font-size:12px;color:var(--text-3)">Showing 1–6 of 47 applicants</span>
+          <nav class="pagination" aria-label="Pagination">
+            <button type="button" class="page-btn" aria-label="Previous page">←</button>
+            <button type="button" class="page-btn active" aria-current="page" aria-label="Page 1">1</button>
+            <button type="button" class="page-btn" aria-label="Page 2">2</button>
+            <button type="button" class="page-btn" aria-label="Page 3">3</button>
+            <button type="button" class="page-btn" aria-label="Next page">→</button>
+          </nav>
+        </div>
+
+      </div>
+    </div><!-- /panel-applicants -->
+
+  </main>
+</div><!-- /layout -->
+
+<script>
+  function switchTab(tabId) {
+    const announcer = document.getElementById('status-announcer');
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      const isActive = btn.id === 'tab-' + tabId;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-selected', isActive);
+    });
+    document.getElementById('panel-job-info').classList.toggle('job-info-panel', tabId === 'job-info');
+    document.getElementById('panel-job-info').classList.toggle('hidden-panel', tabId !== 'job-info');
+    document.getElementById('panel-applicants').classList.toggle('applicants-panel', tabId !== 'applicants');
+    document.getElementById('panel-applicants').classList.toggle('active-panel', tabId === 'applicants');
+    announcer.textContent = tabId === 'job-info' ? 'Job Info tab selected' : 'Applicants tab selected';
+  }
+
+  function setFilter(btn) {
+    document.querySelectorAll('.sf-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('status-announcer').textContent = 'Filter set to ' + btn.textContent;
+  }
+</script>
+</body>
+</html>
