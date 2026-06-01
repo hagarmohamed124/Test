@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EduVerse — Manage Applicants</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .skip-link {
+    position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden;
+    background: #0891B2; color: #fff; padding: 8px 16px; font-weight: 600; font-size: 14px;
+    border-radius: 0 0 8px 0; z-index: 9999; text-decoration: none;
+  }
+  .skip-link:focus { position: fixed; left: 0; top: 0; width: auto; height: auto; overflow: visible; }
+
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+  :root {
+    --primary:       #0891B2;
+    --primary-dark:  #0e7490;
+    --primary-light: #cffafe;
+    --accent:        #059669;
+    --accent-light:  #d1fae5;
+    --bg:            #f0f9ff;
+    --surface:       #ffffff;
+    --surface-2:     #f8fafc;
+    --border:        #e2e8f0;
+    --text-1:        #0f172a;
+    --text-2:        #475569;
+    --text-3:        #94a3b8;
+    --danger:        #dc2626;
+    --danger-light:  #fef2f2;
+    --sidebar-w:     248px;
+    --radius-pill:   9999px;
+    --radius-card:   20px;
+    --radius-input:  12px;
+
+    /* status colors */
+    --s-applied:     #6366f1;
+    --s-applied-bg:  #eef2ff;
+    --s-review:      #d97706;
+    --s-review-bg:   #fffbeb;
+    --s-interview:   #0891B2;
+    --s-interview-bg:#cffafe;
+    --s-offer:       #7c3aed;
+    --s-offer-bg:    #f5f3ff;
+    --s-hired:       #059669;
+    --s-hired-bg:    #d1fae5;
+    --s-rejected:    #dc2626;
+    --s-rejected-bg: #fef2f2;
+    --s-withdrawn:   #64748b;
+    --s-withdrawn-bg:#f1f5f9;
+  }
+
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text-1); display: flex; min-height: 100vh; font-size: 14px; line-height: 1.5; }
+
+  /* ── SIDEBAR (same as US12) ── */
+  aside { width: var(--sidebar-w); background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 20; padding: 0 12px; }
+  .logo { display: flex; align-items: center; gap: 10px; padding: 20px 12px 16px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+  .logo-mark { width: 34px; height: 34px; border-radius: 10px; background: var(--primary); display: grid; place-items: center; font-weight: 800; font-size: 16px; color: #fff; }
+  .logo-text .plan { font-size: 9px; font-weight: 600; color: var(--text-3); letter-spacing: .06em; text-transform: uppercase; }
+  .logo-text .name { font-size: 13px; font-weight: 700; color: var(--text-1); }
+  .nav-label { font-size: 10px; font-weight: 700; color: var(--text-3); letter-spacing: .08em; text-transform: uppercase; padding: 10px 12px 4px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 500; color: var(--text-2); cursor: pointer; transition: background 140ms, color 140ms; text-decoration: none; margin-bottom: 1px; }
+  .nav-item:hover { background: var(--bg); color: var(--text-1); }
+  .nav-item.active { background: var(--primary-light); color: var(--primary-dark); font-weight: 600; }
+  .nav-badge { margin-left: auto; background: var(--primary); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: var(--radius-pill); }
+  .sidebar-bottom { margin-top: auto; padding: 12px 0; border-top: 1px solid var(--border); }
+  .org-pill { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--radius-pill); cursor: pointer; }
+  .org-avatar { width: 32px; height: 32px; border-radius: var(--radius-pill); background: linear-gradient(135deg, #0891B2, #059669); display: grid; place-items: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .org-name { font-size: 12px; font-weight: 600; }
+  .org-role { font-size: 11px; color: var(--text-3); }
+
+  /* ── MAIN ── */
+  main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+  .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-3); }
+  .breadcrumb a { color: var(--text-3); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--primary); }
+  .breadcrumb .sep { color: var(--border); }
+  .breadcrumb .current { color: var(--text-1); font-weight: 600; }
+  .header-actions { display: flex; align-items: center; gap: 10px; }
+  .btn-icon { width: 36px; height: 36px; border-radius: var(--radius-pill); border: 1px solid var(--border); background: var(--surface); display: grid; place-items: center; cursor: pointer; color: var(--text-2); transition: border-color 140ms, color 140ms; }
+  .btn-icon:hover { border-color: var(--primary); color: var(--primary); }
+
+  /* ── PAGE ── */
+  .page-body { padding: 28px 32px; flex: 1; }
+
+  /* ── JOB HERO ── */
+  .job-hero {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-card); padding: 24px 28px;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  }
+  .job-hero-info { flex: 1; min-width: 200px; }
+  .job-hero-title { font-size: 20px; font-weight: 800; color: var(--text-1); margin-bottom: 6px; }
+  .job-hero-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .meta-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 12px; border-radius: var(--radius-pill);
+    background: var(--surface-2); border: 1px solid var(--border);
+    font-size: 11px; font-weight: 600; color: var(--text-2);
+  }
+  .status-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 14px; border-radius: var(--radius-pill);
+    font-size: 11px; font-weight: 700; letter-spacing: .02em;
+  }
+  .chip-active { background: var(--accent-light); color: #065f46; }
+  .chip-closed { background: var(--danger-light); color: var(--danger); }
+
+  .job-hero-stats { display: flex; gap: 24px; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat-num { font-size: 24px; font-weight: 800; color: var(--text-1); }
+  .stat-label { font-size: 11px; color: var(--text-3); font-weight: 500; }
+
+  .job-hero-actions { display: flex; gap: 8px; align-items: center; }
+
+  .btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 20px; border-radius: var(--radius-pill); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; touch-action: manipulation; transition: background 150ms, box-shadow 150ms, border-color 150ms, color 150ms; border: none; white-space: nowrap; }
+  .btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .btn-ghost { background: transparent; color: var(--text-2); border: 1.5px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--text-2); color: var(--text-1); }
+  .btn-primary { background: var(--primary); color: #fff; border: 1.5px solid transparent; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-danger { background: var(--danger); color: #fff; border: 1.5px solid transparent; }
+
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-pill); padding: 8px 14px;
+    margin-bottom: 20px;
+  }
+  .search-input-wrap {
+    display: flex; align-items: center; gap: 8px; flex: 1; min-width: 180px;
+  }
+  .search-input-wrap input {
+    border: none; outline: none; font-family: inherit; font-size: 13px;
+    color: var(--text-1); background: transparent; width: 100%;
+  }
+  .search-input-wrap input::placeholder { color: var(--text-3); }
+  .filter-divider { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+  .filter-select {
+    border: none; outline: none; font-family: inherit; font-size: 12px; font-weight: 600;
+    color: var(--text-2); background: transparent; cursor: pointer; padding: 2px 4px;
+    appearance: none;
+  }
+  .filter-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 12px; border-radius: var(--radius-pill);
+    background: var(--surface-2); border: 1px solid var(--border);
+    font-size: 11px; font-weight: 600; color: var(--text-2); cursor: pointer;
+    transition: border-color 140ms, color 140ms, background 140ms; white-space: nowrap;
+    font-family: inherit;
+  }
+  .filter-pill:hover { border-color: var(--primary); color: var(--primary); }
+  .filter-pill.active { background: var(--primary-light); border-color: var(--primary); color: var(--primary-dark); }
+  .filter-count {
+    margin-left: 3px; background: var(--primary); color: #fff;
+    border-radius: var(--radius-pill); padding: 0 5px; font-size: 10px; font-weight: 700;
+  }
+
+  /* ── TABS ── */
+  .view-tabs {
+    display: flex; align-items: center; gap: 4px; margin-bottom: 16px;
+    role: tablist;
+  }
+  .view-tab {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 16px; border-radius: var(--radius-pill);
+    font-size: 12px; font-weight: 600; color: var(--text-3);
+    cursor: pointer; transition: background 140ms, color 140ms; border: 1.5px solid transparent;
+    background: none; font-family: inherit;
+  }
+  .view-tab:hover { color: var(--text-2); }
+  .view-tab.active { background: var(--surface); border-color: var(--border); color: var(--text-1); }
+  .view-tab:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .tab-count {
+    background: var(--surface-2); color: var(--text-3);
+    padding: 1px 7px; border-radius: var(--radius-pill);
+    font-size: 10px; font-weight: 700; border: 1px solid var(--border);
+  }
+  .view-tab.active .tab-count { background: var(--primary-light); color: var(--primary); border-color: var(--primary-light); }
+
+  /* ── APPLICANT TABLE ── */
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead { background: var(--surface-2); }
+  th { padding: 11px 16px; text-align: left; font-size: 11px; font-weight: 700; color: var(--text-3); letter-spacing: .05em; text-transform: uppercase; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  th:first-child { padding-left: 20px; }
+  td { padding: 14px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  td:first-child { padding-left: 20px; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg); }
+
+  .applicant-cell { display: flex; align-items: center; gap: 12px; }
+  .applicant-avatar {
+    width: 36px; height: 36px; border-radius: var(--radius-pill);
+    display: grid; place-items: center;
+    font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .applicant-name { font-size: 13px; font-weight: 700; color: var(--text-1); }
+  .applicant-email { font-size: 11px; color: var(--text-3); }
+  .applicant-unavailable { font-size: 11px; color: var(--danger); font-weight: 600; }
+
+  /* status badge */
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 12px; border-radius: var(--radius-pill);
+    font-size: 11px; font-weight: 700; white-space: nowrap;
+  }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .s-applied   { background: var(--s-applied-bg);   color: var(--s-applied);   }
+  .s-review    { background: var(--s-review-bg);    color: var(--s-review);    }
+  .s-interview { background: var(--s-interview-bg); color: var(--s-interview); }
+  .s-offer     { background: var(--s-offer-bg);     color: var(--s-offer);     }
+  .s-hired     { background: var(--s-hired-bg);     color: var(--s-hired);     }
+  .s-rejected  { background: var(--s-rejected-bg);  color: var(--s-rejected);  }
+  .s-withdrawn { background: var(--s-withdrawn-bg); color: var(--s-withdrawn); }
+
+  /* status selector */
+  .status-select {
+    background: none; border: none; font-family: inherit; font-size: 11px;
+    font-weight: 700; cursor: pointer; padding: 4px 12px;
+    border-radius: var(--radius-pill); appearance: none;
+    -webkit-appearance: none; color: inherit;
+  }
+  .status-select:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  .verified-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: var(--radius-pill);
+    background: var(--accent-light); color: var(--accent);
+    font-size: 10px; font-weight: 700;
+  }
+
+  .action-btns { display: flex; align-items: center; gap: 6px; }
+  .action-btn {
+    display: flex; align-items: center; gap: 5px;
+    padding: 5px 12px; border-radius: var(--radius-pill);
+    border: 1.5px solid var(--border); background: var(--surface);
+    font-family: inherit; font-size: 11px; font-weight: 600; color: var(--text-2);
+    cursor: pointer; touch-action: manipulation; transition: border-color 140ms, color 140ms, background 140ms; white-space: nowrap;
+  }
+  .action-btn:hover { border-color: var(--primary); color: var(--primary); }
+  .action-btn.cv { border-color: var(--primary-light); color: var(--primary); background: var(--primary-light); }
+  .action-btn.cv:hover { background: var(--primary); color: #fff; }
+
+  /* closed notice */
+  .closed-notice {
+    background: var(--danger-light); border: 1px solid #fecaca;
+    border-radius: var(--radius-card); padding: 14px 18px;
+    margin-bottom: 16px; display: flex; align-items: center; gap: 12px;
+    font-size: 13px; color: #991b1b;
+  }
+
+  /* ── PAGINATION ── */
+  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-top: 1px solid var(--border); }
+  .page-info { font-size: 12px; color: var(--text-3); }
+  .page-btns { display: flex; align-items: center; gap: 4px; }
+  .page-btn { width: 32px; height: 32px; border-radius: var(--radius-pill); border: 1.5px solid var(--border); background: var(--surface); display: grid; place-items: center; cursor: pointer; touch-action: manipulation; font-size: 12px; font-weight: 600; color: var(--text-2); transition: background 140ms, color 140ms; font-family: inherit; }
+  .page-btn:hover { border-color: var(--primary); color: var(--primary); }
+  .page-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+  .page-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  a { cursor: pointer; touch-action: manipulation; }
+  select { cursor: pointer; touch-action: manipulation; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<aside>
+  <div class="logo">
+    <div class="logo-mark">P</div>
+    <div class="logo-text">
+      <span class="plan">Plan P</span>
+      <span class="name">EduVerse</span>
+    </div>
+  </div>
+  <div class="nav-label">Overview</div>
+  <a class="nav-item" href="#">
+    <svg aria-hidden="true" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Dashboard
+  </a>
+  <div class="nav-label" style="margin-top:8px">Talent</div>
+  <a class="nav-item" href="#">
+    <svg aria-hidden="true" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+    Job Postings
+  </a>
+  <a class="nav-item active" href="#">
+    <svg aria-hidden="true" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Applicants
+    <span class="nav-badge">24</span>
+  </a>
+  <a class="nav-item" href="#">
+    <svg aria-hidden="true" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    Candidate Search
+  </a>
+  <div class="nav-label" style="margin-top:8px">Organization</div>
+  <a class="nav-item" href="#">
+    <svg aria-hidden="true" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+    Organization Profile
+  </a>
+  <a class="nav-item" href="#">
+    <svg aria-hidden="true" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Admin Review
+  </a>
+  <div class="sidebar-bottom">
+    <div class="org-pill">
+      <div class="org-avatar">MH</div>
+      <div><div class="org-name">Mayo Healthcare</div><div class="org-role">Organization Admin</div></div>
+    </div>
+  </div>
+</aside>
+
+<main id="main-content">
+  <div aria-live="polite" aria-atomic="true" class="sr-only" id="status-announcer"></div>
+  <header>
+    <div class="breadcrumb">
+      <a href="#">Job Postings</a>
+      <span class="sep">›</span>
+      <a href="#">Senior Clinical Educator</a>
+      <span class="sep">›</span>
+      <span class="current">Applicants</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" style="font-size:12px;padding:7px 16px;">
+        <svg aria-hidden="true" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export CSV
+      </button>
+      <button class="btn-icon" aria-label="Notifications">
+        <svg aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="page-body">
+
+    <!-- Job Hero Card -->
+    <div class="job-hero">
+      <div class="job-hero-info">
+        <h2 class="job-hero-title">Senior Clinical Educator</h2>
+        <div class="job-hero-meta">
+          <span class="status-chip chip-active">● Active</span>
+          <span class="meta-chip">
+            <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+            Cardiology
+          </span>
+          <span class="meta-chip">
+            <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Posted 5 days ago
+          </span>
+          <span class="meta-chip">2 Openings</span>
+        </div>
+      </div>
+      <div class="job-hero-stats">
+        <div class="stat"><div class="stat-num">24</div><div class="stat-label">Total Applicants</div></div>
+        <div class="stat"><div class="stat-num" style="color:var(--s-review)">8</div><div class="stat-label">Under Review</div></div>
+        <div class="stat"><div class="stat-num" style="color:var(--s-interview)">5</div><div class="stat-label">Interviews</div></div>
+        <div class="stat"><div class="stat-num" style="color:var(--s-hired)">1</div><div class="stat-label">Hired</div></div>
+      </div>
+      <div class="job-hero-actions">
+        <button class="btn btn-ghost" style="font-size:12px;padding:8px 16px;">Edit Posting</button>
+        <button class="btn btn-primary" style="font-size:12px;padding:8px 16px;">
+          <svg aria-hidden="true" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Close Job
+        </button>
+      </div>
+    </div>
+
+    <!-- Closed notice (edge case) -->
+    <div class="closed-notice" style="display:none" id="closed-notice">
+      <svg aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <div><strong>This job is closed.</strong> New applications are disabled. Existing applications and applicant history are preserved below.</div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="search-input-wrap">
+        <svg aria-hidden="true" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--text-3);flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" placeholder="Search by name, specialty, or certification…" />
+      </div>
+      <div class="filter-divider"></div>
+      <select class="filter-select">
+        <option>All Statuses</option>
+        <option>Applied</option>
+        <option>Under Review</option>
+        <option>Interview Scheduled</option>
+        <option>Offer Extended</option>
+        <option>Hired</option>
+        <option>Rejected</option>
+        <option>Withdrawn</option>
+      </select>
+      <div class="filter-divider"></div>
+      <button type="button" class="filter-pill active">Verified Skills <span class="filter-count">3</span></button>
+      <button type="button" class="filter-pill">AACN Certified</button>
+      <button type="button" class="filter-pill">MSN+</button>
+      <button type="button" class="filter-pill">5+ Years</button>
+    </div>
+
+    <!-- View Tabs -->
+    <div class="view-tabs" role="tablist">
+      <button type="button" role="tab" class="view-tab active" aria-selected="true">
+        <svg aria-hidden="true" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        All <span class="tab-count">24</span>
+      </button>
+      <button type="button" role="tab" class="view-tab" aria-selected="false">
+        Applied <span class="tab-count">7</span>
+      </button>
+      <button type="button" role="tab" class="view-tab" aria-selected="false">
+        Under Review <span class="tab-count">8</span>
+      </button>
+      <button type="button" role="tab" class="view-tab" aria-selected="false">
+        Interview <span class="tab-count">5</span>
+      </button>
+      <button type="button" role="tab" class="view-tab" aria-selected="false">
+        Offer Extended <span class="tab-count">2</span>
+      </button>
+      <button type="button" role="tab" class="view-tab" aria-selected="false">
+        Hired <span class="tab-count">1</span>
+      </button>
+      <button type="button" role="tab" class="view-tab" aria-selected="false">
+        Rejected <span class="tab-count">1</span>
+      </button>
+    </div>
+
+    <!-- Applicants Table -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Applicant</th>
+            <th scope="col">Applied</th>
+            <th scope="col">Qualifications</th>
+            <th scope="col">Status</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr>
+            <td>
+              <div class="applicant-cell">
+                <div class="applicant-avatar" style="background:linear-gradient(135deg,#0891B2,#22D3EE)">SL</div>
+                <div>
+                  <div class="applicant-name">Dr. Sarah Lin</div>
+                  <div class="applicant-email">sarah.lin@email.com</div>
+                </div>
+              </div>
+            </td>
+            <td style="font-size:12px;color:var(--text-3)">May 14, 2026</td>
+            <td>
+              <div style="display:flex;flex-wrap:wrap;gap:4px">
+                <span class="verified-badge">✓ MSN</span>
+                <span class="verified-badge">✓ AACN</span>
+                <span style="font-size:11px;color:var(--text-3);align-self:center;margin-left:2px">8 yrs exp</span>
+              </div>
+            </td>
+            <td>
+              <div class="status-badge s-interview" style="cursor:pointer">
+                <span class="status-dot"></span>
+                <select class="status-select s-interview" aria-label="Change applicant status" onchange="updateStatus(this)">
+                  <option>Applied</option>
+                  <option>Under Review</option>
+                  <option selected>Interview Scheduled</option>
+                  <option>Offer Extended</option>
+                  <option>Hired</option>
+                  <option>Rejected</option>
+                  <option>Withdrawn</option>
+                </select>
+              </div>
+            </td>
+            <td>
+              <div class="action-btns">
+                <button class="action-btn cv">
+                  <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  View CV
+                </button>
+                <button class="action-btn">Application</button>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="applicant-cell">
+                <div class="applicant-avatar" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">JM</div>
+                <div>
+                  <div class="applicant-name">James Morales</div>
+                  <div class="applicant-email">j.morales@medcenter.org</div>
+                </div>
+              </div>
+            </td>
+            <td style="font-size:12px;color:var(--text-3)">May 13, 2026</td>
+            <td>
+              <div style="display:flex;flex-wrap:wrap;gap:4px">
+                <span class="verified-badge">✓ BSN</span>
+                <span class="verified-badge">✓ CNE</span>
+                <span style="font-size:11px;color:var(--text-3);align-self:center;margin-left:2px">5 yrs exp</span>
+              </div>
+            </td>
+            <td>
+              <div class="status-badge s-offer">
+                <span class="status-dot"></span>
+                <select class="status-select s-offer" aria-label="Change applicant status" onchange="updateStatus(this)">
+                  <option>Applied</option>
+                  <option>Under Review</option>
+                  <option>Interview Scheduled</option>
+                  <option selected>Offer Extended</option>
+                  <option>Hired</option>
+                  <option>Rejected</option>
+                  <option>Withdrawn</option>
+                </select>
+              </div>
+            </td>
+            <td>
+              <div class="action-btns">
+                <button class="action-btn cv">
+                  <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  View CV
+                </button>
+                <button class="action-btn">Application</button>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="applicant-cell">
+                <div class="applicant-avatar" style="background:linear-gradient(135deg,#059669,#34d399)">AK</div>
+                <div>
+                  <div class="applicant-name">Aisha Khan</div>
+                  <div class="applicant-email">aisha.k@gmail.com</div>
+                </div>
+              </div>
+            </td>
+            <td style="font-size:12px;color:var(--text-3)">May 12, 2026</td>
+            <td>
+              <div style="display:flex;flex-wrap:wrap;gap:4px">
+                <span class="verified-badge">✓ MSN</span>
+                <span style="font-size:11px;color:var(--text-3);align-self:center;margin-left:2px">6 yrs exp</span>
+              </div>
+            </td>
+            <td>
+              <div class="status-badge s-hired">
+                <span class="status-dot"></span>
+                <select class="status-select s-hired" aria-label="Change applicant status" onchange="updateStatus(this)">
+                  <option>Applied</option>
+                  <option>Under Review</option>
+                  <option>Interview Scheduled</option>
+                  <option>Offer Extended</option>
+                  <option selected>Hired</option>
+                  <option>Rejected</option>
+                  <option>Withdrawn</option>
+                </select>
+              </div>
+            </td>
+            <td>
+              <div class="action-btns">
+                <button class="action-btn cv">
+                  <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  View CV
+                </button>
+                <button class="action-btn">Application</button>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="applicant-cell">
+                <div class="applicant-avatar" style="background:linear-gradient(135deg,#d97706,#fbbf24)">RP</div>
+                <div>
+                  <div class="applicant-name">Rajan Patel</div>
+                  <div class="applicant-email">rajan.p@hospital.net</div>
+                </div>
+              </div>
+            </td>
+            <td style="font-size:12px;color:var(--text-3)">May 11, 2026</td>
+            <td>
+              <div style="display:flex;flex-wrap:wrap;gap:4px">
+                <span class="verified-badge">✓ BSN</span>
+                <span style="font-size:11px;color:var(--text-3);align-self:center;margin-left:2px">3 yrs exp</span>
+              </div>
+            </td>
+            <td>
+              <div class="status-badge s-review">
+                <span class="status-dot"></span>
+                <select class="status-select s-review" aria-label="Change applicant status" onchange="updateStatus(this)">
+                  <option>Applied</option>
+                  <option selected>Under Review</option>
+                  <option>Interview Scheduled</option>
+                  <option>Offer Extended</option>
+                  <option>Hired</option>
+                  <option>Rejected</option>
+                  <option>Withdrawn</option>
+                </select>
+              </div>
+            </td>
+            <td>
+              <div class="action-btns">
+                <button class="action-btn cv">
+                  <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  View CV
+                </button>
+                <button class="action-btn">Application</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- deleted student edge case -->
+          <tr style="opacity:.65">
+            <td>
+              <div class="applicant-cell">
+                <div class="applicant-avatar" style="background:#e2e8f0;color:var(--text-3)">?</div>
+                <div>
+                  <div class="applicant-name" style="color:var(--text-3)">[Profile Deleted]</div>
+                  <div class="applicant-unavailable"><svg aria-hidden="true" focusable="false" width="14" height="14" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline;vertical-align:-2px;margin-right:4px;flex-shrink:0"><path d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 6a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 6zm0 9a1 1 0 100-2 1 1 0 000 2z" fill="currentColor"/></svg> Student account removed — application history preserved</div>
+                </div>
+              </div>
+            </td>
+            <td style="font-size:12px;color:var(--text-3)">May 10, 2026</td>
+            <td style="font-size:12px;color:var(--text-3)">—</td>
+            <td>
+              <div class="status-badge s-withdrawn">
+                <span class="status-dot"></span>Unavailable
+              </div>
+            </td>
+            <td>
+              <div class="action-btns">
+                <button class="action-btn" disabled style="opacity:.5;cursor:not-allowed">View CV</button>
+                <button class="action-btn">View History</button>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="applicant-cell">
+                <div class="applicant-avatar" style="background:linear-gradient(135deg,#dc2626,#f87171)">TN</div>
+                <div>
+                  <div class="applicant-name">Theresa Nguyen</div>
+                  <div class="applicant-email">t.nguyen@clinic.com</div>
+                </div>
+              </div>
+            </td>
+            <td style="font-size:12px;color:var(--text-3)">May 9, 2026</td>
+            <td>
+              <div style="display:flex;flex-wrap:wrap;gap:4px">
+                <span class="verified-badge">✓ MSN</span>
+                <span class="verified-badge">✓ AACN</span>
+                <span style="font-size:11px;color:var(--text-3);align-self:center;margin-left:2px">10 yrs exp</span>
+              </div>
+            </td>
+            <td>
+              <div class="status-badge s-applied">
+                <span class="status-dot"></span>
+                <select class="status-select s-applied" aria-label="Change applicant status" onchange="updateStatus(this)">
+                  <option selected>Applied</option>
+                  <option>Under Review</option>
+                  <option>Interview Scheduled</option>
+                  <option>Offer Extended</option>
+                  <option>Hired</option>
+                  <option>Rejected</option>
+                  <option>Withdrawn</option>
+                </select>
+              </div>
+            </td>
+            <td>
+              <div class="action-btns">
+                <button class="action-btn cv">
+                  <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  View CV
+                </button>
+                <button class="action-btn">Application</button>
+              </div>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+      <div class="pagination">
+        <div class="page-info">Showing 6 of 24 applicants</div>
+        <div class="page-btns">
+          <button class="page-btn" aria-label="Previous page">‹</button>
+          <button class="page-btn active" aria-label="Page 1" aria-current="page">1</button>
+          <button class="page-btn" aria-label="Page 2">2</button>
+          <button class="page-btn" aria-label="Page 3">3</button>
+          <button class="page-btn" aria-label="Page 4">4</button>
+          <button class="page-btn" aria-label="Next page">›</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page-body -->
+</main>
+
+<script>
+  const statusColors = {
+    'Applied':             's-applied',
+    'Under Review':        's-review',
+    'Interview Scheduled': 's-interview',
+    'Offer Extended':      's-offer',
+    'Hired':               's-hired',
+    'Rejected':            's-rejected',
+    'Withdrawn':           's-withdrawn',
+  };
+  function updateStatus(sel) {
+    const badge = sel.closest('.status-badge');
+    const val = sel.value;
+    // remove old color class
+    Object.values(statusColors).forEach(c => { badge.classList.remove(c); sel.classList.remove(c); });
+    const cls = statusColors[val] || '';
+    badge.classList.add(cls); sel.classList.add(cls);
+  }
+  document.querySelectorAll('.view-tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.view-tab').forEach(x => {
+        x.classList.remove('active');
+        x.setAttribute('aria-selected', 'false');
+      });
+      t.classList.add('active');
+      t.setAttribute('aria-selected', 'true');
+    });
+  });
+  document.querySelectorAll('.filter-pill').forEach(p => {
+    p.addEventListener('click', () => p.classList.toggle('active'));
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EduVerse — Candidate Search</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .skip-link {
+    position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden;
+    background: #0891B2; color: #fff; padding: 8px 16px; font-weight: 600; font-size: 14px;
+    border-radius: 0 0 8px 0; z-index: 9999; text-decoration: none;
+  }
+  .skip-link:focus { position: fixed; left: 0; top: 0; width: auto; height: auto; overflow: visible; }
+
+  :root {
+    --primary:       #0891B2;
+    --primary-dark:  #0e7490;
+    --primary-light: #cffafe;
+    --accent:        #059669;
+    --accent-light:  #d1fae5;
+    --bg:            #f0f9ff;
+    --surface:       #ffffff;
+    --surface-2:     #f8fafc;
+    --border:        #e2e8f0;
+    --text-1:        #0f172a;
+    --text-2:        #475569;
+    --text-3:        #94a3b8;
+    --danger:        #dc2626;
+    --warning:       #d97706;
+    --sidebar-w:     248px;
+    --filter-w:      228px;
+    --radius-pill:   9999px;
+    --radius-card:   20px;
+    --radius-input:  12px;
+  }
+
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text-1); display: flex; min-height: 100vh; font-size: 14px; line-height: 1.5; }
+
+  /* ── SIDEBAR ── */
+  aside { width: var(--sidebar-w); background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 20; padding: 0 12px; }
+  .logo { display: flex; align-items: center; gap: 10px; padding: 20px 12px 16px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+  .logo-mark { width: 34px; height: 34px; border-radius: 10px; background: var(--primary); display: grid; place-items: center; font-weight: 800; font-size: 16px; color: #fff; }
+  .logo-text .plan { font-size: 9px; font-weight: 600; color: var(--text-3); letter-spacing: .06em; text-transform: uppercase; }
+  .logo-text .name { font-size: 13px; font-weight: 700; color: var(--text-1); }
+  .nav-label { font-size: 10px; font-weight: 700; color: var(--text-3); letter-spacing: .08em; text-transform: uppercase; padding: 10px 12px 4px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 500; color: var(--text-2); cursor: pointer; transition: background 140ms, color 140ms; text-decoration: none; margin-bottom: 1px; }
+  .nav-item:hover { background: var(--bg); color: var(--text-1); }
+  .nav-item.active { background: var(--primary-light); color: var(--primary-dark); font-weight: 600; }
+  .nav-badge { margin-left: auto; background: var(--primary); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: var(--radius-pill); }
+  .sidebar-bottom { margin-top: auto; padding: 12px 0; border-top: 1px solid var(--border); }
+  .org-pill { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--radius-pill); cursor: pointer; }
+  .org-avatar { width: 32px; height: 32px; border-radius: var(--radius-pill); background: linear-gradient(135deg, #0891B2, #059669); display: grid; place-items: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .org-name { font-size: 12px; font-weight: 600; }
+  .org-role { font-size: 11px; color: var(--text-3); }
+
+  /* ── MAIN ── */
+  main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; overflow: hidden; }
+
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+  .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-3); }
+  .breadcrumb .current { color: var(--text-1); font-weight: 600; }
+  .header-actions { display: flex; align-items: center; gap: 10px; }
+  .btn-icon { width: 36px; height: 36px; border-radius: var(--radius-pill); border: 1px solid var(--border); background: var(--surface); display: grid; place-items: center; cursor: pointer; color: var(--text-2); transition: border-color 140ms, color 140ms; }
+  .btn-icon:hover { border-color: var(--primary); color: var(--primary); }
+
+  /* ── SEARCH HERO ── */
+  .search-hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    padding: 28px 32px;
+    position: relative; overflow: hidden;
+  }
+  .search-hero::before {
+    content: ''; position: absolute; top: -40px; right: -40px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: rgba(255,255,255,.06);
+  }
+  .search-hero::after {
+    content: ''; position: absolute; bottom: -60px; right: 120px;
+    width: 140px; height: 140px; border-radius: 50%;
+    background: rgba(255,255,255,.04);
+  }
+  .search-hero h1 { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .search-hero p { font-size: 13px; color: rgba(255,255,255,.7); margin-bottom: 18px; }
+
+  .search-bar-hero {
+    display: flex; align-items: center; gap: 0;
+    background: #fff; border-radius: var(--radius-pill);
+    padding: 6px 6px 6px 18px;
+    box-shadow: 0 4px 24px rgba(0,0,0,.15);
+    max-width: 680px;
+  }
+  .search-bar-hero input {
+    flex: 1; border: none; outline: none; font-family: inherit;
+    font-size: 14px; color: var(--text-1); background: transparent; min-width: 0;
+  }
+  .search-bar-hero input::placeholder { color: var(--text-3); }
+  .search-bar-hero .sep { width: 1px; height: 22px; background: var(--border); margin: 0 12px; flex-shrink: 0; }
+  .search-bar-hero select {
+    border: none; outline: none; font-family: inherit; font-size: 13px;
+    color: var(--text-2); background: transparent; cursor: pointer; font-weight: 500;
+    padding: 0 8px; appearance: none; min-width: 120px;
+  }
+  .btn-search {
+    background: var(--primary); color: #fff; border: none;
+    border-radius: var(--radius-pill); padding: 10px 22px;
+    font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; touch-action: manipulation;
+    display: flex; align-items: center; gap: 7px; transition: background 150ms;
+    white-space: nowrap;
+  }
+  .btn-search:hover { background: var(--primary-dark); }
+  .btn-search:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+  .search-hero-meta {
+    display: flex; align-items: center; gap: 16px; margin-top: 12px; flex-wrap: wrap;
+  }
+  .hero-stat {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: rgba(255,255,255,.75); font-weight: 500;
+  }
+  .hero-stat strong { color: #fff; font-weight: 700; }
+
+  /* ── CONTENT AREA ── */
+  .content-area { display: flex; flex: 1; overflow: hidden; }
+
+  /* ── FILTER PANEL ── */
+  .filter-panel {
+    width: var(--filter-w); background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 20px 16px; overflow-y: auto;
+    flex-shrink: 0;
+  }
+  .filter-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .filter-title { font-size: 13px; font-weight: 700; color: var(--text-1); }
+  .filter-clear { font-size: 11px; color: var(--primary); cursor: pointer; font-weight: 600; border: none; background: none; }
+  .filter-clear:hover { text-decoration: underline; }
+  .filter-clear:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  .filter-group { margin-bottom: 20px; }
+  .filter-group-title { font-size: 11px; font-weight: 700; color: var(--text-3); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; }
+
+  .filter-option {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 10px; border-radius: var(--radius-pill);
+    cursor: pointer; transition: background 120ms; margin-bottom: 2px;
+    width: 100%;
+  }
+  .filter-option:hover { background: var(--bg); }
+  .filter-option.checked { background: var(--primary-light); }
+  .filter-option-left { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-2); font-weight: 500; }
+  .filter-option.checked .filter-option-left { color: var(--primary-dark); font-weight: 600; }
+  .filter-checkbox {
+    width: 16px; height: 16px; border-radius: 4px;
+    border: 2px solid var(--border); background: var(--surface); flex-shrink: 0;
+    display: grid; place-items: center; transition: background 140ms, border-color 140ms;
+  }
+  .filter-option.checked .filter-checkbox {
+    background: var(--primary); border-color: var(--primary);
+  }
+  .filter-option.checked .filter-checkbox::after {
+    content: '✓'; font-size: 9px; color: #fff; font-weight: 800;
+  }
+  .filter-count-badge { font-size: 10px; color: var(--text-3); font-weight: 600; }
+
+  .filter-divider { height: 1px; background: var(--border); margin: 12px -16px; }
+
+  .range-row { display: flex; align-items: center; gap: 8px; }
+  .range-input {
+    flex: 1; padding: 7px 10px; border: 1.5px solid var(--border);
+    border-radius: var(--radius-input); font-family: inherit; font-size: 12px;
+    color: var(--text-1); outline: none;
+  }
+  .range-input:focus { border-color: var(--primary); }
+  .range-input:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .range-sep { color: var(--text-3); font-size: 12px; flex-shrink: 0; }
+
+  .active-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
+  .active-filter-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px 3px 12px; border-radius: var(--radius-pill);
+    background: var(--primary-light); color: var(--primary-dark);
+    font-size: 11px; font-weight: 600; border: 1px solid rgba(8,145,178,.2);
+  }
+  .active-filter-pill button { background: none; border: none; color: var(--primary); cursor: pointer; font-size: 13px; line-height: 1; padding: 0 1px; }
+
+  /* sr-only utility */
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+  /* ── RESULTS ── */
+  .results-area { flex: 1; overflow-y: auto; padding: 20px 28px; }
+
+  .results-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
+  }
+  .results-count { font-size: 14px; font-weight: 700; color: var(--text-1); }
+  .results-count span { color: var(--primary); }
+  .results-sort { display: flex; align-items: center; gap: 8px; }
+  .results-sort label { font-size: 12px; color: var(--text-3); }
+  .results-sort select {
+    border: 1.5px solid var(--border); border-radius: var(--radius-pill);
+    padding: 5px 28px 5px 12px; font-family: inherit; font-size: 12px; font-weight: 600;
+    color: var(--text-2); background: var(--surface); outline: none; cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+  }
+
+  /* ── CANDIDATE CARD ── */
+  .candidate-grid { display: flex; flex-direction: column; gap: 12px; }
+
+  .candidate-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-card); padding: 18px 20px;
+    display: flex; align-items: flex-start; gap: 14px;
+    transition: box-shadow 160ms, border-color 160ms;
+    cursor: pointer;
+  }
+  .candidate-card:hover { box-shadow: 0 4px 16px rgba(8,145,178,.1); border-color: var(--primary-light); }
+
+  .cand-avatar {
+    width: 44px; height: 44px; border-radius: var(--radius-pill);
+    display: grid; place-items: center; font-size: 15px; font-weight: 800; color: #fff;
+    flex-shrink: 0; position: relative;
+  }
+  .verified-ring { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .online-dot {
+    position: absolute; bottom: 0; right: 0; width: 11px; height: 11px;
+    border-radius: 50%; background: var(--accent); border: 2px solid var(--surface);
+  }
+
+  .cand-body { flex: 1; min-width: 0; }
+  .cand-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+  .cand-name-row { display: flex; align-items: center; gap: 8px; }
+  .cand-name { font-size: 14px; font-weight: 700; color: var(--text-1); }
+  .cand-verified {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 2px 8px; border-radius: var(--radius-pill);
+    background: var(--accent-light); color: var(--accent);
+    font-size: 10px; font-weight: 700;
+  }
+  .cand-partial {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 2px 8px; border-radius: var(--radius-pill);
+    background: #fffbeb; color: var(--warning);
+    font-size: 10px; font-weight: 700;
+  }
+  .cand-title { font-size: 12px; color: var(--text-2); margin-bottom: 8px; }
+
+  .cand-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .cand-tag {
+    padding: 3px 11px; border-radius: var(--radius-pill);
+    background: var(--surface-2); border: 1px solid var(--border);
+    font-size: 11px; font-weight: 600; color: var(--text-2); white-space: nowrap;
+  }
+  .cand-tag.skill { background: var(--primary-light); border-color: rgba(8,145,178,.2); color: var(--primary-dark); }
+  .cand-tag.cert { background: #f5f3ff; border-color: rgba(124,58,237,.15); color: #6d28d9; }
+  .cand-tag.exp { background: var(--accent-light); border-color: rgba(5,150,105,.15); color: #065f46; }
+
+  .cand-meta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .cand-meta-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-3); }
+
+  .cand-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; flex-shrink: 0; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius-pill); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; touch-action: manipulation; transition: background 150ms, box-shadow 150ms, border-color 150ms, color 150ms; border: none; white-space: nowrap; }
+  .btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .btn-primary { background: var(--primary); color: #fff; border: 1.5px solid transparent; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-ghost { background: transparent; color: var(--text-2); border: 1.5px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+  .match-score {
+    font-size: 11px; font-weight: 700; color: var(--accent);
+    background: var(--accent-light); padding: 3px 10px; border-radius: var(--radius-pill);
+    white-space: nowrap;
+  }
+
+  /* empty state */
+  .empty-state {
+    text-align: center; padding: 60px 32px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+  }
+  .empty-icon {
+    width: 56px; height: 56px; border-radius: var(--radius-pill);
+    background: var(--bg); display: grid; place-items: center;
+    margin: 0 auto 16px; border: 1px solid var(--border);
+  }
+  .empty-state h3 { font-size: 15px; font-weight: 700; color: var(--text-1); margin-bottom: 6px; }
+  .empty-state p { font-size: 13px; color: var(--text-3); max-width: 340px; margin: 0 auto 20px; }
+  .suggestion-chips { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; }
+  .suggestion-chip {
+    padding: 5px 16px; border-radius: var(--radius-pill);
+    background: var(--primary-light); color: var(--primary-dark);
+    font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid rgba(8,145,178,.2);
+    transition: background 140ms, color 140ms;
+    font-family: inherit;
+  }
+  .suggestion-chip:hover { background: var(--primary); color: #fff; }
+
+  /* perf pill */
+  .perf-notice {
+    display: flex; align-items: center; gap: 8px; justify-content: center;
+    padding: 8px 16px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-pill); font-size: 11px; color: var(--text-3); margin-top: 12px;
+  }
+  .load-more-btn { background: none; border: none; cursor: pointer; touch-action: manipulation; font-family: inherit; font-size: 11px; font-weight: 600; color: var(--text-2); padding: 0; text-decoration: underline; }
+
+  a { cursor: pointer; touch-action: manipulation; }
+  select { cursor: pointer; touch-action: manipulation; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<aside>
+  <div class="logo">
+    <div class="logo-mark">P</div>
+    <div class="logo-text">
+      <span class="plan">Plan P</span>
+      <span class="name">EduVerse</span>
+    </div>
+  </div>
+  <div class="nav-label">Overview</div>
+  <a class="nav-item" href="#">
+    <svg aria-hidden="true" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Dashboard
+  </a>
+  <div class="nav-label" style="margin-top:8px">Talent</div>
+  <a class="nav-item" href="#">
+    <svg aria-hidden="true" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+    Job Postings
+  </a>
+  <a class="nav-item" href="#">
+    <svg aria-hidden="true" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Applicants
+    <span class="nav-badge">24</span>
+  </a>
+  <a class="nav-item active" href="#">
+    <svg aria-hidden="true" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    Candidate Search
+  </a>
+  <div class="nav-label" style="margin-top:8px">Organization</div>
+  <a class="nav-item" href="#">
+    <svg aria-hidden="true" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+    Organization Profile
+  </a>
+  <a class="nav-item" href="#">
+    <svg aria-hidden="true" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Admin Review
+  </a>
+  <div class="sidebar-bottom">
+    <div class="org-pill">
+      <div class="org-avatar">MH</div>
+      <div><div class="org-name">Mayo Healthcare</div><div class="org-role">Organization Admin</div></div>
+    </div>
+  </div>
+</aside>
+
+<main id="main-content">
+  <div aria-live="polite" aria-atomic="true" class="sr-only" id="status-announcer"></div>
+  <header>
+    <div class="breadcrumb">
+      <span class="current">Candidate Search</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn-icon" aria-label="Notifications">
+        <svg aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Search Hero -->
+  <div class="search-hero">
+    <h1>Find the Right Candidate</h1>
+    <p>Search 12,400+ verified healthcare professionals on the platform</p>
+    <div class="search-bar-hero">
+      <svg aria-hidden="true" width="15" height="15" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" name="q" autocomplete="off" placeholder="Search by name, specialty, certification, or skill…" value="cardiology educator certified" id="search-input" />
+      <div class="sep"></div>
+      <select aria-label="Filter by location" name="location">
+        <option>All Locations</option>
+        <option>Boston, MA</option>
+        <option>New York, NY</option>
+        <option>Remote</option>
+      </select>
+      <button class="btn-search">
+        <svg aria-hidden="true" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Search
+      </button>
+    </div>
+    <div class="search-hero-meta">
+      <div class="hero-stat"><strong>1,284</strong> results found</div>
+      <div class="hero-stat">•</div>
+      <div class="hero-stat">Sorted by <strong>Best Match</strong></div>
+      <div class="hero-stat">•</div>
+      <div class="hero-stat">Filters applied: <strong>4 active</strong></div>
+    </div>
+  </div>
+
+  <div class="content-area">
+
+    <!-- Filter Panel -->
+    <div class="filter-panel">
+      <div class="filter-header">
+        <span class="filter-title">Filters</span>
+        <button class="filter-clear">Clear all</button>
+      </div>
+
+      <!-- Active filters -->
+      <div class="active-filters" style="margin-bottom:14px">
+        <span class="active-filter-pill">Cardiology <button aria-label="Remove Cardiology filter">×</button></span>
+        <span class="active-filter-pill">MSN+ <button aria-label="Remove MSN+ filter">×</button></span>
+        <span class="active-filter-pill">Verified <button aria-label="Remove Verified filter">×</button></span>
+        <span class="active-filter-pill">5+ yrs <button aria-label="Remove 5+ yrs filter">×</button></span>
+      </div>
+      <div class="filter-divider"></div>
+
+      <div class="filter-group">
+        <div class="filter-group-title">Qualification</div>
+        <label class="filter-option checked">
+          <input type="checkbox" class="sr-only" checked />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>BSN</div>
+          <span class="filter-count-badge">342</span>
+        </label>
+        <label class="filter-option checked">
+          <input type="checkbox" class="sr-only" checked />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>MSN</div>
+          <span class="filter-count-badge">218</span>
+        </label>
+        <label class="filter-option">
+          <input type="checkbox" class="sr-only" />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>DNP</div>
+          <span class="filter-count-badge">97</span>
+        </label>
+        <label class="filter-option">
+          <input type="checkbox" class="sr-only" />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>MD / DO</div>
+          <span class="filter-count-badge">156</span>
+        </label>
+        <label class="filter-option">
+          <input type="checkbox" class="sr-only" />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>PhD / Research</div>
+          <span class="filter-count-badge">63</span>
+        </label>
+      </div>
+
+      <div class="filter-divider"></div>
+
+      <div class="filter-group">
+        <div class="filter-group-title">Specialty</div>
+        <label class="filter-option checked">
+          <input type="checkbox" class="sr-only" checked />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>Cardiology</div>
+          <span class="filter-count-badge">189</span>
+        </label>
+        <label class="filter-option">
+          <input type="checkbox" class="sr-only" />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>Emergency Medicine</div>
+          <span class="filter-count-badge">204</span>
+        </label>
+        <label class="filter-option">
+          <input type="checkbox" class="sr-only" />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>Nursing Education</div>
+          <span class="filter-count-badge">411</span>
+        </label>
+        <label class="filter-option">
+          <input type="checkbox" class="sr-only" />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>Pharmacy</div>
+          <span class="filter-count-badge">93</span>
+        </label>
+        <label class="filter-option">
+          <input type="checkbox" class="sr-only" />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>Radiology</div>
+          <span class="filter-count-badge">71</span>
+        </label>
+      </div>
+
+      <div class="filter-divider"></div>
+
+      <div class="filter-group">
+        <div class="filter-group-title">Certifications</div>
+        <label class="filter-option">
+          <input type="checkbox" class="sr-only" />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>AACN Certified</div>
+          <span class="filter-count-badge">167</span>
+        </label>
+        <label class="filter-option">
+          <input type="checkbox" class="sr-only" />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>CNE</div>
+          <span class="filter-count-badge">234</span>
+        </label>
+        <label class="filter-option">
+          <input type="checkbox" class="sr-only" />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>BLS / ACLS</div>
+          <span class="filter-count-badge">589</span>
+        </label>
+        <label class="filter-option">
+          <input type="checkbox" class="sr-only" />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>ANCC Board Certified</div>
+          <span class="filter-count-badge">112</span>
+        </label>
+      </div>
+
+      <div class="filter-divider"></div>
+
+      <div class="filter-group">
+        <div class="filter-group-title">Experience Level</div>
+        <label class="filter-option">
+          <input type="checkbox" class="sr-only" />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>Entry (0–2 yrs)</div>
+          <span class="filter-count-badge">98</span>
+        </label>
+        <label class="filter-option">
+          <input type="checkbox" class="sr-only" />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>Mid-level (3–5 yrs)</div>
+          <span class="filter-count-badge">310</span>
+        </label>
+        <label class="filter-option checked">
+          <input type="checkbox" class="sr-only" checked />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>Senior (5–8 yrs)</div>
+          <span class="filter-count-badge">278</span>
+        </label>
+        <label class="filter-option">
+          <input type="checkbox" class="sr-only" />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>Principal (8+ yrs)</div>
+          <span class="filter-count-badge">195</span>
+        </label>
+      </div>
+
+      <div class="filter-divider"></div>
+
+      <div class="filter-group">
+        <div class="filter-group-title">Verified Skills</div>
+        <label class="filter-option checked">
+          <input type="checkbox" class="sr-only" checked />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>Verified Only</div>
+          <span class="filter-count-badge">421</span>
+        </label>
+        <label class="filter-option">
+          <input type="checkbox" class="sr-only" />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>Curriculum Development</div>
+          <span class="filter-count-badge">184</span>
+        </label>
+        <label class="filter-option">
+          <input type="checkbox" class="sr-only" />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>Simulation Training</div>
+          <span class="filter-count-badge">109</span>
+        </label>
+        <label class="filter-option">
+          <input type="checkbox" class="sr-only" />
+          <div class="filter-option-left"><div class="filter-checkbox"></div>OSCE Examination</div>
+          <span class="filter-count-badge">67</span>
+        </label>
+      </div>
+
+    </div>
+
+    <!-- Results Area -->
+    <div class="results-area">
+
+      <div class="results-top">
+        <div class="results-count"><span>1,284</span> candidates found</div>
+        <div class="results-sort">
+          <label for="sort-select">Sort by</label>
+          <select id="sort-select">
+            <option>Best Match</option>
+            <option>Most Experienced</option>
+            <option>Recently Active</option>
+            <option>Certifications</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="candidate-grid">
+
+        <!-- Card 1 — top match -->
+        <div class="candidate-card" tabindex="0" role="article">
+          <div class="cand-avatar verified-ring" style="background:linear-gradient(135deg,#0891B2,#22D3EE)">
+            SL
+            <div class="online-dot"></div>
+          </div>
+          <div class="cand-body">
+            <div class="cand-top">
+              <div>
+                <div class="cand-name-row">
+                  <span class="cand-name">Dr. Sarah Lin</span>
+                  <span class="cand-verified">✓ Verified</span>
+                </div>
+                <div class="cand-title">Senior Clinical Educator · Cardiology · Boston, MA</div>
+              </div>
+              <span class="match-score">96% match</span>
+            </div>
+            <div class="cand-tags">
+              <span class="cand-tag exp">8 yrs exp</span>
+              <span class="cand-tag cert">AACN Certified</span>
+              <span class="cand-tag cert">CNE</span>
+              <span class="cand-tag skill">Curriculum Dev</span>
+              <span class="cand-tag skill">Simulation Training</span>
+              <span class="cand-tag">MSN</span>
+              <span class="cand-tag">BLS/ACLS</span>
+            </div>
+            <div class="cand-meta">
+              <div class="cand-meta-item">
+                <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72"/></svg>
+                Open to contact
+              </div>
+              <div class="cand-meta-item">
+                <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Active 2h ago
+              </div>
+              <div class="cand-meta-item">
+                <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Hybrid preferred
+              </div>
+            </div>
+          </div>
+          <div class="cand-actions">
+            <button class="btn btn-primary">View Profile</button>
+            <button class="btn btn-ghost">Save</button>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="candidate-card" tabindex="0" role="article">
+          <div class="cand-avatar verified-ring" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">
+            JM
+          </div>
+          <div class="cand-body">
+            <div class="cand-top">
+              <div>
+                <div class="cand-name-row">
+                  <span class="cand-name">James Morales</span>
+                  <span class="cand-verified">✓ Verified</span>
+                </div>
+                <div class="cand-title">Clinical Educator · Emergency · New York, NY</div>
+              </div>
+              <span class="match-score">89% match</span>
+            </div>
+            <div class="cand-tags">
+              <span class="cand-tag exp">5 yrs exp</span>
+              <span class="cand-tag cert">CNE</span>
+              <span class="cand-tag cert">ANCC Board Certified</span>
+              <span class="cand-tag skill">OSCE Examination</span>
+              <span class="cand-tag">BSN</span>
+            </div>
+            <div class="cand-meta">
+              <div class="cand-meta-item">
+                <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Active 1d ago
+              </div>
+              <div class="cand-meta-item">
+                <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                On-site preferred
+              </div>
+            </div>
+          </div>
+          <div class="cand-actions">
+            <button class="btn btn-primary">View Profile</button>
+            <button class="btn btn-ghost">Save</button>
+          </div>
+        </div>
+
+        <!-- Card 3 — partial profile edge case -->
+        <div class="candidate-card" tabindex="0" role="article" style="border-color:#fde68a;background:#fffbeb">
+          <div class="cand-avatar" style="background:linear-gradient(135deg,#d97706,#fbbf24)">
+            RP
+          </div>
+          <div class="cand-body">
+            <div class="cand-top">
+              <div>
+                <div class="cand-name-row">
+                  <span class="cand-name">Rajan Patel</span>
+                  <span class="cand-partial"><svg aria-hidden="true" focusable="false" width="12" height="12" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline;vertical-align:-1px;margin-right:3px"><path d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 6a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 6zm0 9a1 1 0 100-2 1 1 0 000 2z" fill="currentColor"/></svg>Partial Profile</span>
+                </div>
+                <div class="cand-title">Clinical Nurse · Cardiology · Remote</div>
+              </div>
+              <span class="match-score" style="background:#fde68a;color:#92400e">71% match</span>
+            </div>
+            <div class="cand-tags">
+              <span class="cand-tag exp">3 yrs exp</span>
+              <span class="cand-tag">BSN</span>
+              <span class="cand-tag" style="background:#fde68a;color:#92400e;border-color:#fbbf24;font-size:10px">Profile incomplete</span>
+            </div>
+            <div style="font-size:11px;color:var(--warning);background:#fef3c7;padding:5px 12px;border-radius:var(--radius-pill);display:inline-flex;align-items:center;gap:5px;margin-top:4px">
+              <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Certifications and work history not completed — some information may be missing
+            </div>
+          </div>
+          <div class="cand-actions">
+            <button class="btn btn-primary">View Profile</button>
+            <button class="btn btn-ghost">Save</button>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="candidate-card" tabindex="0" role="article">
+          <div class="cand-avatar verified-ring" style="background:linear-gradient(135deg,#059669,#34d399)">
+            TN
+          </div>
+          <div class="cand-body">
+            <div class="cand-top">
+              <div>
+                <div class="cand-name-row">
+                  <span class="cand-name">Theresa Nguyen</span>
+                  <span class="cand-verified">✓ Verified</span>
+                </div>
+                <div class="cand-title">Lead Clinical Educator · Cardiology · Boston, MA</div>
+              </div>
+              <span class="match-score">84% match</span>
+            </div>
+            <div class="cand-tags">
+              <span class="cand-tag exp">10 yrs exp</span>
+              <span class="cand-tag cert">AACN Certified</span>
+              <span class="cand-tag cert">BLS/ACLS</span>
+              <span class="cand-tag skill">Curriculum Dev</span>
+              <span class="cand-tag">MSN</span>
+            </div>
+            <div class="cand-meta">
+              <div class="cand-meta-item">
+                <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Active 3d ago
+              </div>
+              <div class="cand-meta-item">
+                <svg aria-hidden="true" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Flexible
+              </div>
+            </div>
+          </div>
+          <div class="cand-actions">
+            <button class="btn btn-primary">View Profile</button>
+            <button class="btn btn-ghost">Save</button>
+          </div>
+        </div>
+
+      </div><!-- /candidate-grid -->
+
+      <!-- performance notice (pagination/caching indicator) -->
+      <div class="perf-notice">
+        <svg aria-hidden="true" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Showing page 1 of 214 · Results cached for speed · <button type="button" class="load-more-btn">Load more</button>
+      </div>
+
+    </div><!-- /results-area -->
+
+  </div><!-- /content-area -->
+</main>
+
+<script>
+  // Filter options: toggle checked class on parent label via change event
+  document.querySelectorAll('.filter-option input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      cb.closest('.filter-option').classList.toggle('checked', cb.checked);
+    });
+  });
+
+  // Active filter remove buttons
+  document.querySelectorAll('.active-filter-pill button').forEach(btn => {
+    btn.addEventListener('click', e => { e.stopPropagation(); btn.closest('.active-filter-pill').remove(); });
+  });
+</script>
+</body>
+</html>

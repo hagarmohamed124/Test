@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>All Candidates — Org Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --blue:#0284c7;--blue-dk:#0369a1;--blue-lt:#e0f2fe;--blue-50:#eff6ff;
+  --teal:#0d9488;--green:#16a34a;--amber:#d97706;--red:#dc2626;--purple:#7c3aed;
+  --gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-200:#e2e8f0;--gray-300:#cbd5e1;
+  --gray-400:#94a3b8;--gray-500:#64748b;--gray-600:#475569;--gray-700:#334155;
+  --gray-800:#1e293b;--gray-900:#0f172a;
+  --sidebar:#0f172a;--radius:8px;--radius-lg:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--gray-100);color:var(--gray-800);font-size:14px;-webkit-font-smoothing:antialiased}
+.shell{display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{width:224px;background:var(--sidebar);flex-shrink:0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.sb-brand{padding:18px 18px 14px;border-bottom:1px solid #1e293b;display:flex;align-items:center;gap:10px}
+.sb-logo{width:34px;height:34px;background:var(--blue);border-radius:9px;display:grid;place-items:center}
+.sb-logo span{font-size:14px;font-weight:700;color:#fff}
+.sb-brandname{font-size:15px;font-weight:700;color:#fff}
+.sb-org{padding:12px 18px;border-bottom:1px solid #1e293b;display:flex;align-items:center;gap:10px}
+.org-av{width:36px;height:36px;border-radius:10px;background:var(--blue);display:grid;place-items:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.org-name{font-size:13px;font-weight:500;color:#fff}
+.org-role{font-size:11px;color:rgba(255,255,255,.4)}
+.sb-nav{flex:1;padding:12px 10px}
+.sb-label{font-size:9px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:#64748b;padding:8px 8px 6px}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;cursor:pointer;color:#94a3b8;font-size:13px;margin-bottom:1px;transition:all .15s}
+.ni:hover{background:rgba(255,255,255,.07);color:#fff}
+.ni.act{background:var(--blue);color:#fff;font-weight:600}
+.ni-badge{margin-left:auto;font-size:10px;font-weight:700;background:rgba(255,255,255,.15);color:#fff;padding:1px 7px;border-radius:10px}
+.ni.act .ni-badge{background:#0369a1}
+.sb-verified{margin:10px 14px;background:#1e293b;border:1px solid #334155;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px}
+.sv-icon{width:28px;height:28px;background:#15803d;border-radius:7px;display:grid;place-items:center;flex-shrink:0;font-size:13px;color:#fff}
+.sv-text{font-size:11px;color:rgba(255,255,255,.6);line-height:1.4}
+.sv-text strong{color:#4ade80;font-weight:500}
+.sb-footer{padding:10px;border-top:1px solid #1e293b}
+.sb-footer .ni{color:#64748b}
+
+/* ── TOPBAR ── */
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.topbar{background:#fff;border-bottom:1px solid var(--gray-200);height:58px;padding:0 24px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:20;flex-shrink:0}
+.bc{font-size:13px;color:var(--gray-400);display:flex;align-items:center;gap:6px}
+.bc-leaf{color:var(--gray-800);font-weight:600}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.tb-btn{height:34px;padding:0 14px;border-radius:var(--radius);border:1px solid var(--gray-200);background:#fff;font-size:13px;font-weight:500;color:var(--gray-600);cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit;transition:all .15s}
+.tb-btn:hover{background:var(--gray-50)}
+.tb-av{width:34px;height:34px;border-radius:50%;background:var(--blue);display:grid;place-items:center;font-size:12px;font-weight:700;color:#fff;cursor:pointer}
+.bell-wrap{position:relative}
+.bell-wrap .tb-btn{width:34px;padding:0;justify-content:center}
+.notif-dot{width:7px;height:7px;background:var(--red);border-radius:50%;border:2px solid #fff;position:absolute;top:6px;right:6px}
+
+/* ── CONTENT ── */
+.content{padding:24px;flex:1}
+.page-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px}
+.page-title{font-size:20px;font-weight:700;color:var(--gray-900)}
+.page-sub{font-size:13px;color:var(--gray-400);margin-top:3px}
+.page-actions{display:flex;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--gray-200);background:#fff;color:var(--gray-600);font-family:inherit;transition:all .15s}
+.btn:hover{background:var(--gray-50)}
+.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn-primary:hover{background:var(--blue-dk)}
+
+/* ── TOOLBAR ── */
+.toolbar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.search-box{display:flex;align-items:center;gap:8px;border:1px solid var(--gray-200);border-radius:var(--radius);padding:0 12px;height:36px;background:#fff;min-width:200px;transition:all .15s}
+.search-box:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-lt)}
+.search-box svg{width:14px;height:14px;color:var(--gray-400);flex-shrink:0}
+.search-box input{border:none;outline:none;font-size:13px;font-family:inherit;color:var(--gray-800);width:160px}
+.search-box input::placeholder{color:var(--gray-400)}
+.filter-btn{height:36px;padding:0 14px;border-radius:var(--radius);border:1px solid var(--gray-200);background:#fff;font-size:13px;font-weight:500;color:var(--gray-600);cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit}
+.f-cnt{background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:0 6px;border-radius:10px;line-height:17px}
+.tb-sep{width:1px;height:22px;background:var(--gray-200)}
+.qf-wrap{display:flex;gap:4px;flex-wrap:wrap}
+.qf-btn{height:36px;padding:0 14px;border-radius:var(--radius);border:1px solid var(--gray-200);background:#fff;font-size:12.5px;font-weight:500;color:var(--gray-500);cursor:pointer;font-family:inherit;transition:all .15s}
+.qf-btn:hover{border-color:var(--blue);color:var(--blue)}
+.qf-btn.act{background:var(--blue-lt);border-color:var(--blue);color:var(--blue-dk);font-weight:600}
+.tb-right{margin-left:auto;font-size:13px;color:var(--gray-400)}
+.verif-toggle{height:36px;padding:0 14px;border-radius:var(--radius);border:1px solid var(--gray-200);background:#fff;font-size:12.5px;font-weight:500;color:var(--gray-500);cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit;transition:all .15s}
+.verif-toggle:hover{border-color:var(--green);color:var(--green)}
+
+/* ── ACTIVE FILTERS ── */
+.filter-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.f-label{font-size:12px;font-weight:500;color:var(--gray-500)}
+.f-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 8px 3px 10px;background:var(--blue-50);border:1px solid var(--blue-lt);border-radius:20px;font-size:12px;font-weight:500;color:var(--blue-dk)}
+.f-chip button{display:grid;place-items:center;width:14px;height:14px;border-radius:50%;border:none;background:rgba(37,99,235,.15);cursor:pointer;color:var(--blue);font-size:10px;line-height:1}
+.f-chip button:hover{background:rgba(37,99,235,.3)}
+.clear-all{font-size:12px;color:var(--gray-400);cursor:pointer;padding:3px 8px;border-radius:var(--radius);border:none;background:none;font-family:inherit}
+.clear-all:hover{background:var(--gray-100);color:var(--gray-700)}
+
+/* ── BULK BAR ── */
+.bulk-bar{display:none;align-items:center;gap:10px;padding:10px 16px;background:var(--blue);border-radius:var(--radius);margin-bottom:12px}
+.bulk-bar.show{display:flex}
+.bulk-bar span{font-size:13px;font-weight:600;color:#fff}
+.bulk-actions{display:flex;gap:6px;margin-left:auto}
+.bulk-btn{height:28px;padding:0 12px;border-radius:6px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);font-size:12px;font-weight:500;color:#fff;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;transition:all .15s}
+.bulk-btn:hover{background:rgba(255,255,255,.25)}
+.bulk-btn.danger{border-color:rgba(220,38,38,.4);background:rgba(220,38,38,.25)}
+.bulk-btn.danger:hover{background:rgba(220,38,38,.45)}
+
+/* ── TABLE ── */
+.table-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead tr{background:var(--gray-50);border-bottom:1px solid var(--gray-200)}
+th{padding:11px 14px;font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;text-align:left;user-select:none}
+th.sortable{cursor:pointer}
+th.sortable:hover{color:var(--gray-700)}
+.th-inner{display:inline-flex;align-items:center;gap:4px}
+.sort-icon{width:12px;height:12px;opacity:.4;transition:opacity .15s}
+th[aria-sort="ascending"] .sort-icon,th[aria-sort="descending"] .sort-icon{opacity:1;color:var(--blue)}
+th.cb-col{width:46px;padding-left:16px;padding-right:6px}
+th.act-col{width:80px;text-align:right}
+
+tbody tr{border-bottom:1px solid var(--gray-100);transition:background .12s;cursor:pointer}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--gray-50)}
+tbody tr.selected{background:var(--blue-50)!important}
+td{padding:12px 14px;vertical-align:middle}
+td.cb-col{padding-left:16px;padding-right:6px}
+td.act-col{text-align:right}
+
+/* ── CELL PARTS ── */
+.cb-wrap{display:flex;align-items:center;justify-content:center;width:26px;height:26px}
+input[type=checkbox]{width:15px;height:15px;border-radius:4px;accent-color:var(--blue);cursor:pointer}
+.cand-cell{display:flex;align-items:center;gap:10px}
+.av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.cand-name{font-size:13.5px;font-weight:600;color:var(--gray-900)}
+.cand-role{font-size:11.5px;color:var(--gray-400);margin-top:1px}
+.job-title{font-size:13px;font-weight:500;color:var(--gray-800)}
+.job-dept{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;color:var(--gray-400);margin-top:2px}
+.match-pill{display:inline-flex;align-items:center;justify-content:center;width:52px;height:28px;border-radius:14px;font-size:13px;font-weight:700;border:1.5px solid}
+.m-hi{background:#f0fdf4;color:#15803d;border-color:#bbf7d0}
+.m-md{background:#eff6ff;color:var(--blue-dk);border-color:#bfdbfe}
+.m-lo{background:#fffbeb;color:#92400e;border-color:#fde68a}
+.verif-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:3px 8px;border-radius:20px;white-space:nowrap}
+.vb-yes{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}
+.vb-no{background:var(--gray-50);color:var(--gray-400);border:1px solid var(--gray-200)}
+.cv-wrap{display:flex;flex-direction:column;gap:4px;min-width:70px}
+.cv-pct{font-size:12px;font-weight:600}
+.cv-track{height:5px;background:var(--gray-100);border-radius:3px;overflow:hidden}
+.cv-fill{height:5px;border-radius:3px}
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:500;border:1px solid;white-space:nowrap}
+.status-badge::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.s-applied{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}.s-applied::before{background:#2563eb}
+.s-review{background:#fef3c7;color:#92400e;border-color:#fde68a}.s-review::before{background:#d97706}
+.s-interview{background:#ede9fe;color:#6d28d9;border-color:#ddd6fe}.s-interview::before{background:#7c3aed}
+.s-accepted{background:#dcfce7;color:#15803d;border-color:#bbf7d0}.s-accepted::before{background:#16a34a}
+.s-rejected{background:#fee2e2;color:#991b1b;border-color:#fecaca}.s-rejected::before{background:#dc2626}
+.skills-cell{display:flex;align-items:center;gap:4px;flex-wrap:nowrap}
+.sk-pill{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:10px;font-size:10.5px;font-weight:500;white-space:nowrap}
+.sk-v{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}
+.sk-u{background:var(--gray-50);color:var(--gray-500);border:1px solid var(--gray-200)}
+.sk-more{background:var(--gray-100);color:var(--gray-500);border:1px solid var(--gray-200);padding:2px 7px}
+.date-txt{font-size:12.5px;color:var(--gray-500);white-space:nowrap}
+.row-actions{display:flex;align-items:center;gap:3px;justify-content:flex-end}
+.ra-btn{width:30px;height:30px;display:grid;place-items:center;border-radius:6px;border:none;background:none;cursor:pointer;color:var(--gray-400);transition:all .12s}
+.ra-btn:hover{background:var(--gray-100);color:var(--gray-700)}
+.cv-dl-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:500;cursor:pointer;border:1px solid var(--blue-lt);background:var(--blue-50);color:var(--blue-dk);font-family:inherit;transition:all .15s;white-space:nowrap}
+.cv-dl-btn:hover{background:var(--blue-lt)}
+
+/* ── FOOTER / PAGINATION ── */
+.table-foot{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--gray-200);background:var(--gray-50);flex-wrap:wrap}
+.pg-size-wrap{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-500)}
+.pg-size-sel{height:32px;padding:0 26px 0 10px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-weight:500;color:var(--gray-700);background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 7px center;appearance:none;cursor:pointer;font-family:inherit}
+.pg-info{font-size:13px;color:var(--gray-500)}
+.pg-info strong{color:var(--gray-800);font-variant-numeric:tabular-nums}
+.pagination{display:flex;align-items:center;gap:3px;margin-left:auto}
+.pg-btn{min-width:32px;height:32px;display:grid;place-items:center;border-radius:6px;border:1px solid transparent;font-size:13px;font-weight:500;color:var(--gray-600);cursor:pointer;transition:all .12s;background:none;font-family:inherit}
+.pg-btn:hover:not(:disabled):not(.act){background:var(--gray-100);border-color:var(--gray-200)}
+.pg-btn:disabled{opacity:.35;cursor:not-allowed}
+.pg-btn.act{background:var(--blue);border-color:var(--blue);color:#fff}
+.pg-btn svg{width:13px;height:13px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+
+/* ── EMPTY STATE ── */
+.empty-state{display:none;flex-direction:column;align-items:center;gap:12px;padding:60px 24px;text-align:center}
+.empty-state.show{display:flex}
+.empty-icon{width:52px;height:52px;background:var(--gray-100);border-radius:var(--radius-lg);display:grid;place-items:center}
+.empty-title{font-size:15px;font-weight:600;color:var(--gray-700)}
+.empty-sub{font-size:13px;color:var(--gray-400);max-width:280px}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:24px;right:24px;z-index:9999;pointer-events:none}
+.toast-inner{display:flex;align-items:center;gap:10px;background:var(--gray-900);color:#fff;padding:12px 18px;border-radius:10px;font-size:13.5px;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,.2);pointer-events:auto}
+.toast-inner.success{background:#15803d}
+.toast-inner.info{background:var(--blue)}
+.toast-inner.warn{background:#d97706}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ════════════════════ SIDEBAR ════════════════════ -->
+<nav class="sidebar" aria-label="Main navigation">
+  <div class="sb-brand">
+    <div class="sb-logo"><span>Ed</span></div>
+    <span class="sb-brandname">Plan-P</span>
+  </div>
+  <div class="sb-org">
+    <div class="org-av">AS</div>
+    <div>
+      <div class="org-name">Apex Solutions</div>
+      <div class="org-role">Admin</div>
+    </div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-label">Navigation</div>
+    <div class="ni" onclick="sv('dash')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="ni" onclick="sv('jobs')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+      Job Postings
+    </div>
+    <div class="ni act" id="ni-cands" onclick="sv('cands')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      All Candidates
+      <span class="ni-badge" id="cands-badge">24</span>
+    </div>
+    <div class="ni" onclick="sv('analytics')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Analytics
+    </div>
+  </div>
+  <div class="sb-verified">
+    <div class="sv-icon">✓</div>
+    <div class="sv-text">Verified Employer<br/><strong>EduVerse Partner</strong></div>
+  </div>
+  <div class="sb-footer">
+    <div class="ni">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </div>
+  </div>
+</nav>
+
+<!-- ════════════════════ MAIN ════════════════════ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="bc">
+      <span>Home</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      <span class="bc-leaf">All Candidates</span>
+    </div>
+    <div class="topbar-right">
+      <div class="bell-wrap">
+        <button class="tb-btn" aria-label="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+        <span class="notif-dot" aria-hidden="true"></span>
+      </div>
+      <div class="tb-av" aria-label="User menu" role="button" tabindex="0">AS</div>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- Page header -->
+    <div class="page-hdr">
+      <div>
+        <h1 class="page-title">All Candidates</h1>
+        <p class="page-sub">Review applications and manage your recruitment pipeline</p>
+      </div>
+      <div class="page-actions">
+        <button class="btn" onclick="toast('Exporting candidate list…','info')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar" role="toolbar">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" id="searchQ" placeholder="Search candidates…" aria-label="Search candidates" oninput="applyFilters()"/>
+      </div>
+      <button class="filter-btn" aria-label="Filter">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+        Filter
+        <span class="f-cnt">3</span>
+      </button>
+      <div class="tb-sep" aria-hidden="true"></div>
+      <div class="qf-wrap" role="group" aria-label="Filter by status">
+        <button class="qf-btn act" data-st="all" onclick="setStatus(this)" aria-pressed="true">All (24)</button>
+        <button class="qf-btn" data-st="applied" onclick="setStatus(this)" aria-pressed="false">Applied</button>
+        <button class="qf-btn" data-st="under_review" onclick="setStatus(this)" aria-pressed="false">Reviewing</button>
+        <button class="qf-btn" data-st="interviewing" onclick="setStatus(this)" aria-pressed="false">Interviewing</button>
+        <button class="qf-btn" data-st="accepted" onclick="setStatus(this)" aria-pressed="false">Accepted</button>
+      </div>
+      <button class="verif-toggle" id="verifToggle" onclick="toggleVerif()" aria-pressed="false">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Verified Only
+      </button>
+      <span class="tb-right" id="resultCount" aria-live="polite"></span>
+    </div>
+
+    <!-- Active Filters -->
+    <div class="filter-bar" id="filterBar">
+      <span class="f-label">Filters:</span>
+      <span class="f-chip">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+        PDF / DOC resumes
+        <button onclick="this.closest('.f-chip').remove()" aria-label="Remove resume filter">×</button>
+      </span>
+      <span class="f-chip">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Medical roles
+        <button onclick="this.closest('.f-chip').remove()" aria-label="Remove role filter">×</button>
+      </span>
+      <span class="f-chip">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Match ≥ 70%
+        <button onclick="this.closest('.f-chip').remove()" aria-label="Remove match filter">×</button>
+      </span>
+      <button class="clear-all" onclick="clearFilters()">Clear all</button>
+    </div>
+
+    <!-- Bulk bar -->
+    <div class="bulk-bar" id="bulkBar" role="toolbar" aria-label="Bulk actions">
+      <span id="bulkLabel">0 selected</span>
+      <div class="bulk-actions">
+        <button class="bulk-btn" onclick="toast('Moving stage…','info')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+          Move Stage
+        </button>
+        <button class="bulk-btn" onclick="toast('Opening email composer…','info')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Email All
+        </button>
+        <button class="bulk-btn" onclick="toast('Exporting…','info')">Export</button>
+        <button class="bulk-btn danger" onclick="bulkReject()">Reject Selected</button>
+        <button class="bulk-btn" onclick="clearSel()" style="margin-left:8px;background:rgba(255,255,255,.1)">✕ Cancel</button>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+      <div class="table-wrap" role="region" aria-label="Candidates table">
+        <table id="tbl" aria-describedby="resultCount">
+          <thead>
+            <tr>
+              <th class="cb-col">
+                <div class="cb-wrap"><input type="checkbox" id="selAll" aria-label="Select all" onchange="selAllRows(this)"/></div>
+              </th>
+              <th class="sortable" tabindex="0" aria-sort="none" data-col="name" onclick="sortBy('name')" onkeydown="if(event.key==='Enter')sortBy('name')">
+                <span class="th-inner">Candidate <svg class="sort-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span>
+              </th>
+              <th class="sortable" tabindex="0" aria-sort="none" data-col="job" onclick="sortBy('job')" onkeydown="if(event.key==='Enter')sortBy('job')">
+                <span class="th-inner">Applied For <svg class="sort-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span>
+              </th>
+              <th class="sortable" tabindex="0" aria-sort="none" data-col="match" onclick="sortBy('match')" onkeydown="if(event.key==='Enter')sortBy('match')">
+                <span class="th-inner">Match <svg class="sort-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span>
+              </th>
+              <th>Verified</th>
+              <th class="sortable" tabindex="0" aria-sort="none" data-col="cv" onclick="sortBy('cv')" onkeydown="if(event.key==='Enter')sortBy('cv')">
+                <span class="th-inner">CV % <svg class="sort-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span>
+              </th>
+              <th>Status</th>
+              <th>Skills</th>
+              <th class="sortable" tabindex="0" aria-sort="none" data-col="date" onclick="sortBy('date')" onkeydown="if(event.key==='Enter')sortBy('date')">
+                <span class="th-inner">Applied <svg class="sort-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span>
+              </th>
+              <th class="act-col"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <p class="empty-title">No candidates found</p>
+          <p class="empty-sub">Try adjusting your search or filter criteria.</p>
+          <button class="btn" onclick="clearFilters()" style="margin-top:4px">Clear filters</button>
+        </div>
+      </div>
+      <div class="table-foot">
+        <div class="pg-size-wrap">
+          <label for="pgSize">Rows per page</label>
+          <select id="pgSize" class="pg-size-sel" onchange="setPageSize(+this.value)">
+            <option value="6" selected>06</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+          </select>
+        </div>
+        <p class="pg-info" aria-live="polite">
+          <strong id="pgFrom">1</strong>–<strong id="pgTo">6</strong> of <strong id="pgTotal">6</strong>
+        </p>
+        <nav class="pagination" aria-label="Pagination" id="pgNav"></nav>
+      </div>
+    </div>
+
+  </main>
+</div>
+</div>
+
+<div id="toast" role="alert" aria-live="polite"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const CANDS=[
+  {id:1,ini:'AM',col:'#0284c7',name:'Ahmed Mostafa',   role:'Medical Student · Year 5',  job:'Clinical Fellow — Cardiology',   st:'interviewing',match:94,ver:true, cv:82,date:'15 Feb 2025',dateTs:20250215,vSkills:['ECG Interpretation','Patient Assessment','BLS/CPR'],skills:[]},
+  {id:2,ini:'NS',col:'#7c3aed',name:'Nada Saleh',      role:'Medical Graduate · 2024',   job:'Clinical Fellow — Cardiology',   st:'under_review', match:88,ver:true, cv:91,date:'14 Feb 2025',dateTs:20250214,vSkills:['ECG Interpretation','BLS/CPR','Clinical Doc.'],skills:[]},
+  {id:3,ini:'KH',col:'#059669',name:'Karim Hassan',    role:'Medical Student · Year 6',  job:'Medical Intern — Emergency',     st:'applied',      match:76,ver:false,cv:65,date:'13 Feb 2025',dateTs:20250213,vSkills:[],skills:['BLS/CPR','Patient Assessment']},
+  {id:4,ini:'LA',col:'#d97706',name:'Layla Abdel Rahman',role:'Medical Graduate · 2023',job:'Clinical Fellow — Cardiology',   st:'under_review', match:82,ver:true, cv:78,date:'12 Feb 2025',dateTs:20250212,vSkills:['ECG Interpretation'],skills:['Radiology Basics']},
+  {id:5,ini:'OS',col:'#dc2626',name:'Omar Samir',      role:'Medical Graduate · 2024',   job:'Medical Intern — Emergency',     st:'accepted',     match:91,ver:true, cv:95,date:'10 Feb 2025',dateTs:20250210,vSkills:['BLS/CPR','Patient Assessment','Clinical Doc.'],skills:['ECG Interpretation']},
+  {id:6,ini:'SY',col:'#0891b2',name:'Sara Younis',     role:'Pharmacy Graduate · 2024',  job:'Pharmacy Assistant',             st:'applied',      match:70,ver:false,cv:60,date:'09 Feb 2025',dateTs:20250209,vSkills:[],skills:['Clinical Doc.','Pharmacology']},
+];
+
+const ST_MAP={
+  applied:     {l:'Applied',      cls:'s-applied'},
+  under_review:{l:'Under Review', cls:'s-review'},
+  interviewing:{l:'Interviewing', cls:'s-interview'},
+  accepted:    {l:'Accepted',     cls:'s-accepted'},
+  rejected:    {l:'Rejected',     cls:'s-rejected'},
+};
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let data=[...CANDS], filtered=[...CANDS], selected=new Set();
+let sortCol='dateTs', sortDir='desc', statusFlt='all', verifFlt=false, searchQ='';
+let page=1, pageSize=6;
+
+// ── FILTER + SORT ─────────────────────────────────────────────────────────────
+function applyFilters(){
+  searchQ=document.getElementById('searchQ').value.toLowerCase();
+  filtered=data.filter(c=>{
+    if(statusFlt!=='all'&&c.st!==statusFlt) return false;
+    if(verifFlt&&!c.ver) return false;
+    if(searchQ&&!c.name.toLowerCase().includes(searchQ)&&!c.role.toLowerCase().includes(searchQ)&&!c.job.toLowerCase().includes(searchQ)) return false;
+    return true;
+  });
+  doSort();
+  page=1;
+  render();
+}
+function doSort(){
+  filtered.sort((a,b)=>{
+    let av=a[sortCol], bv=b[sortCol];
+    if(typeof av==='string') av=av.toLowerCase(), bv=bv.toLowerCase();
+    return sortDir==='asc'?(av<bv?-1:av>bv?1:0):(av>bv?-1:av<bv?1:0);
+  });
+}
+function sortBy(col){
+  if(sortCol===col) sortDir=sortDir==='asc'?'desc':'asc';
+  else{sortCol=col;sortDir='asc';}
+  document.querySelectorAll('th[data-col]').forEach(th=>{
+    th.setAttribute('aria-sort',th.dataset.col===col?(sortDir==='asc'?'ascending':'descending'):'none');
+  });
+  doSort(); render();
+}
+function setStatus(btn){
+  statusFlt=btn.dataset.st;
+  document.querySelectorAll('.qf-btn').forEach(b=>{b.classList.toggle('act',b===btn);b.setAttribute('aria-pressed',b===btn);});
+  page=1; applyFilters();
+}
+function toggleVerif(){
+  verifFlt=!verifFlt;
+  const t=document.getElementById('verifToggle');
+  t.setAttribute('aria-pressed',verifFlt);
+  t.style.borderColor=verifFlt?'#16a34a':'';
+  t.style.color=verifFlt?'#15803d':'';
+  t.style.background=verifFlt?'#f0fdf4':'';
+  page=1; applyFilters();
+}
+function clearFilters(){
+  document.getElementById('searchQ').value='';
+  searchQ=''; statusFlt='all'; verifFlt=false;
+  document.querySelectorAll('.qf-btn').forEach((b,i)=>{b.classList.toggle('act',i===0);b.setAttribute('aria-pressed',i===0);});
+  const vt=document.getElementById('verifToggle');
+  vt.style.cssText='';vt.setAttribute('aria-pressed','false');
+  document.querySelectorAll('.f-chip').forEach(c=>c.remove());
+  selected.clear(); page=1; applyFilters();
+}
+
+// ── SELECTION ─────────────────────────────────────────────────────────────────
+function selAllRows(cb){
+  const pageIds=filtered.slice((page-1)*pageSize,page*pageSize).map(c=>c.id);
+  pageIds.forEach(id=>cb.checked?selected.add(id):selected.delete(id));
+  updateBulk(); render();
+}
+function toggleRow(id,checked){
+  checked?selected.add(id):selected.delete(id);
+  updateBulk(); render();
+}
+function clearSel(){selected.clear();updateBulk();render();}
+function updateBulk(){
+  const bar=document.getElementById('bulkBar');
+  const lbl=document.getElementById('bulkLabel');
+  bar.classList.toggle('show',selected.size>0);
+  lbl.textContent=selected.size+' candidate'+(selected.size===1?'':' s')+' selected';
+}
+function bulkReject(){
+  if(confirm('Reject '+selected.size+' candidate(s)?')){
+    selected.forEach(id=>{const c=data.find(x=>x.id===id);if(c)c.st='rejected';});
+    clearSel(); applyFilters(); toast('Candidates rejected','warn');
+  }
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render(){
+  const total=filtered.length;
+  const totalPg=Math.max(1,Math.ceil(total/pageSize));
+  page=Math.min(page,totalPg);
+  const from=(page-1)*pageSize, pageData=filtered.slice(from,from+pageSize);
+
+  document.getElementById('resultCount').textContent=total+' candidate'+(total===1?'':'s')+' found';
+  document.getElementById('pgFrom').textContent=total?from+1:0;
+  document.getElementById('pgTo').textContent=Math.min(from+pageSize,total);
+  document.getElementById('pgTotal').textContent=total;
+
+  // sync select-all checkbox
+  const sa=document.getElementById('selAll');
+  const pageIds=pageData.map(c=>c.id);
+  const allSel=pageIds.length&&pageIds.every(id=>selected.has(id));
+  const someSel=pageIds.some(id=>selected.has(id));
+  sa.checked=allSel; sa.indeterminate=!allSel&&someSel;
+
+  // empty state
+  const empty=document.getElementById('emptyState');
+  if(!pageData.length){empty.classList.add('show');}else{empty.classList.remove('show');}
+
+  document.getElementById('tbody').innerHTML=pageData.map(rowHTML).join('');
+  renderPagination(totalPg);
+}
+
+function rowHTML(c){
+  const st=ST_MAP[c.st]||ST_MAP.applied;
+  const allSkills=[...c.vSkills,...c.skills];
+  const mc=c.match>=90?'m-hi':c.match>=80?'m-md':'m-lo';
+  const cvColor=c.cv>=80?'#15803d':c.cv>=60?'#0284c7':'#d97706';
+  const cvFill=c.cv>=80?'#16a34a':c.cv>=60?'#0284c7':'#d97706';
+  const sel=selected.has(c.id);
+  return`<tr class="${sel?'selected':''}" data-id="${c.id}" onclick="handleRowClick(event,${c.id})">
+    <td class="cb-col" onclick="event.stopPropagation()">
+      <div class="cb-wrap"><input type="checkbox" ${sel?'checked':''} aria-label="Select ${c.name}" onchange="toggleRow(${c.id},this.checked)"/></div>
+    </td>
+    <td>
+      <div class="cand-cell">
+        <div class="av" style="background:${c.col}" aria-hidden="true">${c.ini}</div>
+        <div>
+          <div class="cand-name">${c.name}</div>
+          <div class="cand-role">${c.role}</div>
+        </div>
+      </div>
+    </td>
+    <td>
+      <div class="job-title">${c.job.split('—')[0].trim()}</div>
+      ${c.job.includes('—')?`<div class="job-dept">— ${c.job.split('—')[1].trim()}</div>`:''}
+    </td>
+    <td><span class="match-pill ${mc}" aria-label="${c.match}% match">${c.match}%</span></td>
+    <td>
+      <span class="verif-badge ${c.ver?'vb-yes':'vb-no'}">
+        ${c.ver?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>':
+        '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'}
+        ${c.ver?'Verified':'Unverified'}
+      </span>
+    </td>
+    <td>
+      <div class="cv-wrap">
+        <span class="cv-pct" style="color:${cvColor}">${c.cv}%</span>
+        <div class="cv-track"><div class="cv-fill" style="width:${c.cv}%;background:${cvFill}"></div></div>
+      </div>
+    </td>
+    <td>
+      <span class="status-badge ${st.cls}">${st.l}</span>
+      <div style="margin-top:4px">
+        <select onchange="updateStatus(${c.id},this.value)" onclick="event.stopPropagation()" style="font-size:10.5px;color:#64748b;border:none;background:none;cursor:pointer;font-family:inherit;outline:none" aria-label="Change status for ${c.name}">
+          ${Object.entries(ST_MAP).map(([k,v])=>`<option value="${k}" ${c.st===k?'selected':''}>${v.l}</option>`).join('')}
+        </select>
+      </div>
+    </td>
+    <td>
+      <div class="skills-cell">
+        ${c.vSkills.slice(0,2).map(s=>`<span class="sk-pill sk-v" title="${s} — Verified">✓ ${s}</span>`).join('')}
+        ${c.vSkills.length===0?c.skills.slice(0,2).map(s=>`<span class="sk-pill sk-u">${s}</span>`).join(''):''}
+        ${allSkills.length>2?`<span class="sk-pill sk-more">+${allSkills.length-2}</span>`:''}
+      </div>
+    </td>
+    <td><span class="date-txt">${c.date}</span></td>
+    <td class="act-col" onclick="event.stopPropagation()">
+      <div class="row-actions">
+        <button class="cv-dl-btn" onclick="toast('Downloading CV for ${c.name}…','info')" aria-label="Download CV for ${c.name}">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="15" x2="12" y2="9"/><line x1="9" y1="12" x2="15" y2="12"/></svg>
+          CV
+        </button>
+        <button class="ra-btn" onclick="openProfile(${c.id})" aria-label="View ${c.name} profile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+        <button class="ra-btn" onclick="showMenu(event,${c.id})" aria-label="More actions" aria-haspopup="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+        </button>
+      </div>
+    </td>
+  </tr>`;
+}
+
+function renderPagination(total){
+  const nav=document.getElementById('pgNav');
+  nav.innerHTML='';
+  const prev=document.createElement('button');
+  prev.className='pg-btn';prev.disabled=page<=1;prev.setAttribute('aria-label','Previous');
+  prev.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>';
+  prev.onclick=()=>{if(page>1){page--;render();}};
+  nav.appendChild(prev);
+  for(let i=1;i<=total;i++){
+    const btn=document.createElement('button');
+    btn.className='pg-btn'+(i===page?' act':'');btn.textContent=i;
+    btn.setAttribute('aria-label','Page '+i);if(i===page)btn.setAttribute('aria-current','page');
+    btn.onclick=(()=>{const p=i;return()=>{page=p;render();}})();
+    nav.appendChild(btn);
+  }
+  const next=document.createElement('button');
+  next.className='pg-btn';next.disabled=page>=total;next.setAttribute('aria-label','Next');
+  next.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>';
+  next.onclick=()=>{if(page<total){page++;render();}};
+  nav.appendChild(next);
+}
+
+// ── ACTIONS ───────────────────────────────────────────────────────────────────
+function handleRowClick(e,id){
+  if(e.target.closest('.act-col')||e.target.closest('.cb-col')||e.target.tagName==='SELECT') return;
+  openProfile(id);
+}
+function openProfile(id){const c=CANDS.find(x=>x.id===id);toast('Opening '+c.name+''s profile…','info');}
+function updateStatus(id,st){
+  const c=data.find(x=>x.id===id);if(!c)return;c.st=st;
+  toast(c.name+' → '+ST_MAP[st].l,'success');
+  applyFilters();
+}
+function showMenu(e,id){e.stopPropagation();const c=CANDS.find(x=>x.id===id);toast('Actions for '+c.name,'info');}
+function setPageSize(n){pageSize=n;page=1;render();}
+function sv(v){toast(v+' view','info');}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+const TC={info:'#0284c7',success:'#15803d',warn:'#d97706',error:'#dc2626'};let tt;
+function toast(msg,type='success'){
+  clearTimeout(tt);const d=document.getElementById('toast');
+  d.innerHTML=`<div class="toast-inner ${type}" style="background:${TC[type]};animation:toastIn .2s ease">${msg}</div>`;
+  tt=setTimeout(()=>{d.innerHTML='';},4000);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+applyFilters();
+</script>
+</body>
+</html>
